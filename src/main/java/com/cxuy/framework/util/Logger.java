@@ -39,7 +39,7 @@ public final class Logger {
     private static final String LOGGER_GAP = "\t"; 
 
     private final Object levelLock = new Object(); 
-    private Level level = Level.INFO; 
+    private Level level = Level.DEBUG;
 
     private final Object handlerLock = new Object(); 
     private final Set<Handler> handlers = new HashSet<>(); 
