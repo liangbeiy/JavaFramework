@@ -73,7 +73,7 @@ public final class CachePool<K, M> {
             }
             remove(node);
             synchronized(listenersLock) {
-                if(listener == null || !listeners.contains(listener)) {
+                if(listener != null && !listeners.contains(listener)) {
                     listener.hasRemoved(this, key, node.model);
                 }
                 for(ItemHasDeleted<K, M> l : listeners) {

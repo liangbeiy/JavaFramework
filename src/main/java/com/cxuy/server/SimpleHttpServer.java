@@ -105,10 +105,10 @@ public class SimpleHttpServer implements Server {
                         String message = String.format("A handler has been registered by %s, path=%s -> handlerClass=%s", SimpleHttpServer.class.getName(), hPath, clazz.getName());
                         Logger.d(TAG, message);
                     }
+                } else {
+                    String message = String.format("Warning: %s is ignored, because this class cannot create instance.  ", clazz.getName());
+                    Logger.w(TAG, message);
                 }
-
-                String message = String.format("Warning: %s is ignored, because this class cannot create instance.  ", clazz.getName());
-                Logger.w(TAG, message);
             }
         } catch (Exception e) {
             Logger.e(TAG, "An exception occurred while registering handler", e);
