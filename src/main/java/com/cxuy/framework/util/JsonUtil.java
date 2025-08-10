@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025 liangbeiyuan.
+ * Licensed under the MIT License. See LICENSE file in the project root for full license information.
+ */
+
 package com.cxuy.framework.util;
 
 import com.google.gson.*;
@@ -25,6 +30,11 @@ public final class JsonUtil {
         } catch (JsonSyntaxException e) {
             return null;
         }
+    }
+
+    public static <T> T fromJson(String json, Class<T> rawType, Type... argumentTypes) {
+        Type type = TypeToken.getParameterized(rawType, argumentTypes).getType();
+        return fromJson(json, type);
     }
 
     public static <T> T[] fromJsonToArray(String json, Class<T[]> clazz) {

@@ -1,12 +1,16 @@
+/*
+ * Copyright (c) 2025 liangbeiyuan.
+ * Licensed under the MIT License. See LICENSE file in the project root for full license information.
+ */
+
 package com.cxuy.framework.util;
 
 import com.cxuy.framework.annotation.NonNull;
 import com.cxuy.framework.annotation.Nullable;
 
-import java.io.*;
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 

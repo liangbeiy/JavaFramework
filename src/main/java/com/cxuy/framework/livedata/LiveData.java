@@ -1,12 +1,15 @@
-package com.cxuy.framework.livedata;
+/*
+ * Copyright (c) 2025 liangbeiyuan.
+ * Licensed under the MIT License. See LICENSE file in the project root for full license information.
+ */
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+package com.cxuy.framework.livedata;
 
 import com.cxuy.framework.lifecycle.LifecycleOwner;
 import com.cxuy.framework.util.DispatcherQueue;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class LiveData<T> {
 

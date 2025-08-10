@@ -16,6 +16,11 @@ dependencies {
     implementation("com.google.code.gson:gson:2.13.1")
 }
 
+// 添加-parameters编译参数
+tasks.compileJava {
+    options.compilerArgs.add("-parameters")
+}
+
 tasks.test {
     useJUnitPlatform()
 }
