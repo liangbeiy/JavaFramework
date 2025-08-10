@@ -1,12 +1,10 @@
 package com.cxuy.framework.livedata;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import com.cxuy.framework.lifecycle.LifecycleOwner;
 import com.cxuy.framework.util.DispatcherQueue;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class LiveData<T> {
 

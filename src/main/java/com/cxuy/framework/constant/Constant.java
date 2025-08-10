@@ -5,5 +5,4 @@ public final class Constant {
     public static final String DEFAULT_PLACEHOLDER_STR = "--";
     /**空字符串*/
     public static final String EMPTY_STR = "";
-
 }

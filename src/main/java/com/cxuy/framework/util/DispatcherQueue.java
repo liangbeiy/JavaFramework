@@ -2,12 +2,7 @@ package com.cxuy.framework.util;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class DispatcherQueue {
     public interface Task extends Runnable {  }

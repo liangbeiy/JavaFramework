@@ -27,6 +27,11 @@ public final class JsonUtil {
         }
     }
 
+    public static <T> T fromJson(String json, Class<T> rawType, Type... argumentTypes) {
+        Type type = TypeToken.getParameterized(rawType, argumentTypes).getType();
+        return fromJson(json, type);
+    }
+
     public static <T> T[] fromJsonToArray(String json, Class<T[]> clazz) {
         return INSTANCE.fromJson(json, clazz);
     }

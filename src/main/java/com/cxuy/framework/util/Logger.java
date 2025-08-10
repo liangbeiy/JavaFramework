@@ -1,5 +1,7 @@
 package com.cxuy.framework.util;
 
+import com.cxuy.framework.annotation.NonNull;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashSet;
@@ -8,7 +10,7 @@ import java.util.Set;
 public final class Logger {
 
     @FunctionalInterface
-    public static interface Handler {
+    public interface Handler {
         void handle(Logger.Level level, String tag, String message, Throwable throwable); 
     }
 
@@ -22,7 +24,7 @@ public final class Logger {
 
         private final int rawValue; 
         private final String tag; 
-        private Level(int rawValue, String tag) {
+        Level(int rawValue, String tag) {
             this.rawValue = rawValue; 
             this.tag = tag; 
         }
@@ -33,6 +35,10 @@ public final class Logger {
         static {
             INSTANCE = new Logger(); 
             Logger.addHandler(INSTANCE.printer);
+            Logger.addHandler((level, tag, message, throwable) -> {
+                String log = PrintHandler.generateLog(level, tag, message, throwable);
+                FileUtil.append("./logger/logcat.log", log);
+            });
         }
     }
 
@@ -136,7 +142,7 @@ public final class Logger {
         log(Level.ASSERT, tag, message, throwable);
     }
 
-    private static void log(Level level, String tag, String message, Throwable throwable) {
+    private static void log(@NonNull Level level, String tag, String message, Throwable throwable) {
         Logger logger = Logger.Holder.INSTANCE; 
         synchronized(logger.levelLock) {
             if(level.rawValue < logger.level.rawValue) {
@@ -154,18 +160,27 @@ public final class Logger {
         private static final String DEFAULT_PUCKER = "    "; 
         @Override
         public void handle(Level level, String tag, String message, Throwable throwable) {
-            String log = TimeUtil.iso() + LOGGER_GAP + level.tag + LOGGER_GAP + tag + LOGGER_GAP + message + "\n"; 
+            String log = generateLog(level, tag, message, throwable);
+            print(log);
+        }
+
+        public void print(String log) {
+            System.out.print(log);
+        }
+
+        public static String generateLog(Level level, String tag, String message, Throwable throwable) {
+            String log = TimeUtil.iso() + LOGGER_GAP + level.tag + LOGGER_GAP + tag + LOGGER_GAP + message + "\n";
             if(throwable != null) {
-                String prefixTableString = LOGGER_GAP + LOGGER_GAP + LOGGER_GAP + LOGGER_GAP + LOGGER_GAP; 
+                String prefixTableString = LOGGER_GAP + LOGGER_GAP + LOGGER_GAP + LOGGER_GAP + LOGGER_GAP;
                 log = log + prefixTableString + formatStackTrace(prefixTableString, throwable) + "\n";
             }
-            System.out.print(log);
+            return log;
         }
 
         /**
          * 手动拼接异常的堆栈跟踪信息为字符串，效果等同于 e.printStackTrace()
          */
-        public static String formatStackTrace(String prefixString, Throwable throwable) {
+        private static String formatStackTrace(String prefixString, Throwable throwable) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             printThrowable(throwable, prefixString, pw, new StringBuilder());
