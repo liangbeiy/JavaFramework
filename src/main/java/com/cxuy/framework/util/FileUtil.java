@@ -7,12 +7,17 @@ package com.cxuy.framework.util;
 
 import com.cxuy.framework.annotation.NonNull;
 import com.cxuy.framework.annotation.Nullable;
+import com.cxuy.framework.struct.UniqueQueue;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Queue;
 
 public class FileUtil {
 
@@ -29,6 +34,15 @@ public class FileUtil {
     }
 
     private static final String TAG = "FileUtil";
+
+    private static class HOLDER {
+        private static final FileUtil INSTANCE = new FileUtil();
+    }
+
+    private final Map<String, UniqueQueue<Task>> transaction = new HashMap<>();
+    public FileUtil getInstance() {
+        return HOLDER.INSTANCE;
+    }
 
     /**
      * 判断当前路径下文件是否存在
@@ -160,7 +174,6 @@ public class FileUtil {
                     }
                     return;
                 }
-                // 使用NIO的Files.write简化追加操作
                 // 自动处理文件创建和流关闭，支持追加模式
                 Files.writeString(Paths.get(modifyPath), content, StandardCharsets.UTF_8,
                         StandardOpenOption.CREATE, option);
@@ -177,11 +190,7 @@ public class FileUtil {
     }
 
     private static StandardOpenOption reflectMode(int mode) {
-        return switch(mode) {
-            case WriteFileCallback.MODE_WRITE -> StandardOpenOption.WRITE;
-            case WriteFileCallback.MODE_APPEND -> StandardOpenOption.APPEND;
-            default -> StandardOpenOption.WRITE;
-        };
+        return mode == WriteFileCallback.MODE_APPEND ? StandardOpenOption.APPEND : StandardOpenOption.WRITE;
     }
 
     /**
@@ -190,9 +199,27 @@ public class FileUtil {
      * @param path 输入路径（相对或绝对）
      * @return 解析后的Path对象
      */
-        private static String resolvePath(String path) {
+     private static String resolvePath(String path) {
         // Paths.get()会自动处理相对路径和绝对路径
         // 相对路径将基于当前工作目录解析
         return Paths.get(path).toAbsolutePath().normalize().toString();
-    }
+     }
+
+     private static final class Task {
+         public String taskName;
+         public DispatcherQueue.Task task;
+
+         @Override
+         public boolean equals(Object obj) {
+             if(obj instanceof Task t) {
+                 return taskName.equals(t.taskName);
+             }
+             return false;
+         }
+
+         @Override
+         public int hashCode() {
+             return Objects.hash(taskName);
+         }
+     }
 }
