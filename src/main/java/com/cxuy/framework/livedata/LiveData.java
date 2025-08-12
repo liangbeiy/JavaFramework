@@ -6,7 +6,7 @@
 package com.cxuy.framework.livedata;
 
 import com.cxuy.framework.lifecycle.LifecycleOwner;
-import com.cxuy.framework.util.DispatcherQueue;
+import com.cxuy.framework.coroutine.DispatcherQueue;
 
 import java.util.HashMap;
 import java.util.Map;

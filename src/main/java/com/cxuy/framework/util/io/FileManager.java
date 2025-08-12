@@ -3,11 +3,12 @@
  * Licensed under the MIT License. See LICENSE file in the project root for full license information.
  */
 
-package com.cxuy.framework.util;
+package com.cxuy.framework.util.io;
 
 import com.cxuy.framework.annotation.NonNull;
 import com.cxuy.framework.annotation.Nullable;
-import com.cxuy.framework.struct.UniqueQueue;
+import com.cxuy.framework.util.Logger;
+import com.cxuy.framework.util.io.FileExecutor.FileExecutorIsEmptyCallback;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -15,11 +16,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Queue;
+import java.util.Set;
 
-public class FileUtil {
+public class FileManager implements FileExecutorIsEmptyCallback {
 
     @FunctionalInterface
     public interface ReadFileCallback<T> {
@@ -36,12 +37,40 @@ public class FileUtil {
     private static final String TAG = "FileUtil";
 
     private static class HOLDER {
-        private static final FileUtil INSTANCE = new FileUtil();
+        private static final FileManager INSTANCE = new FileManager();
     }
 
-    private final Map<String, UniqueQueue<Task>> transaction = new HashMap<>();
-    public FileUtil getInstance() {
+    private final Object transactionLock = new Object();
+    private final Map<String, FileExecutor> transaction = new HashMap<>();
+
+    public static FileManager getInstance() {
         return HOLDER.INSTANCE;
+    }
+
+    private FileManager() {
+        Thread thread = new Thread(() -> {
+            while (!Thread.interrupted()) {
+                Set<String> deleteRemoveItem = new HashSet<>();
+                synchronized(transactionLock) {
+                    for(Map.Entry<String, FileExecutor> entry : transaction.entrySet()) {
+                        if(entry.getValue().taskEmpty()) {
+                            deleteRemoveItem.add(entry.getKey());
+                        }
+                    }
+                    for(String item : deleteRemoveItem) {
+                        transaction.remove(item);
+                    }
+                }
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    break;
+                    // ignored
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
 
     /**
@@ -49,7 +78,7 @@ public class FileUtil {
      * @param path 给定的文件路径
      * @return 如果存在返回true
      */
-    public static boolean isExist(@NonNull String path) {
+    public boolean isExist(@NonNull String path) {
         String modifyPath = resolvePath(path);
         File file = new File(modifyPath);
         return file.exists();
@@ -59,7 +88,7 @@ public class FileUtil {
      * 获取当前工作目录下的绝对路径
      * @return 路径
      */
-    public static String getAbsolutePath() {
+    public String getAbsolutePath() {
         return System.getProperty("user.dir");
     }
 
@@ -67,13 +96,17 @@ public class FileUtil {
      * 以String形式读取文件
      * @param path 给定的文件路径
      */
-    public static void read(@NonNull String path, @NonNull ReadFileCallback<String> callback) {
+    public void read(@NonNull String path, @NonNull ReadFileCallback<String> callback) {
         String modifyPath = resolvePath(path);
         // 检查文件是否存在
         if (!isExist(modifyPath)) {
             callback.callback(path, null);
         }
-        DispatcherQueue.io.async(() -> {
+        FileExecutor executor;
+        synchronized(transactionLock) {
+            executor = transaction.computeIfAbsent(modifyPath, s -> new FileExecutor(path, this));
+        }
+        executor.share(() -> {
             try {
                 byte[] bytes = Files.readAllBytes(Paths.get(modifyPath));
                 callback.callback(path, new String(bytes, StandardCharsets.UTF_8));
@@ -87,7 +120,7 @@ public class FileUtil {
      * 以String形式写入文件
      * @param path 给定的文件路径
      */
-    public static void write(@NonNull String path, @Nullable String content) {
+    public void write(@NonNull String path, @Nullable String content) {
         write(path, content, WriteFileCallback.MODE_WRITE, null);
     }
 
@@ -96,7 +129,7 @@ public class FileUtil {
      * @param path 文件路径
      * @param content 内容
      */
-    public static void append(@NonNull String path, @Nullable String content) {
+    public void append(@NonNull String path, @Nullable String content) {
         write(path, content, WriteFileCallback.MODE_APPEND, null);
     }
 
@@ -104,7 +137,7 @@ public class FileUtil {
      * 以String形式写入文件
      * @param path 给定的文件路径
      */
-    public static void write(@NonNull String path, @Nullable String content, @Nullable WriteFileCallback<String> callback) {
+    public void write(@NonNull String path, @Nullable String content, @Nullable WriteFileCallback<String> callback) {
         write(path, content, WriteFileCallback.MODE_WRITE, callback);
     }
 
@@ -113,14 +146,18 @@ public class FileUtil {
      * @param path 文件路径
      * @param content 内容
      */
-    public static void append(@NonNull String path, @Nullable String content, @Nullable WriteFileCallback<String> callback) {
+    public void append(@NonNull String path, @Nullable String content, @Nullable WriteFileCallback<String> callback) {
         write(path, content, WriteFileCallback.MODE_APPEND, callback);
     }
 
-    private static void write(@NonNull String path, @Nullable byte[] content, int mode, @Nullable WriteFileCallback<byte[]> callback) {
+    private void write(@NonNull String path, @Nullable byte[] content, int mode, @Nullable WriteFileCallback<byte[]> callback) {
         final String modifyPath = resolvePath(path);
         final StandardOpenOption option = reflectMode(mode);
-        DispatcherQueue.io.async(() -> {
+        FileExecutor executor;
+        synchronized(transactionLock) {
+            executor = transaction.computeIfAbsent(modifyPath, s -> new FileExecutor(path, this));
+        }
+        executor.mutex(() -> {
             File file = new File(modifyPath);
             // 确保父目录存在
             File parentDir = file.getParentFile();
@@ -152,10 +189,14 @@ public class FileUtil {
         });
     }
 
-    private static void write(@NonNull String path, @Nullable String content, int mode, @Nullable WriteFileCallback<String> callback) {
+    private void write(@NonNull String path, @Nullable String content, int mode, @Nullable WriteFileCallback<String> callback) {
         final String modifyPath = resolvePath(path);
         final StandardOpenOption option = reflectMode(mode);
-        DispatcherQueue.io.async(() -> {
+        FileExecutor executor;
+        synchronized(transactionLock) {
+            executor = transaction.computeIfAbsent(modifyPath, s -> new FileExecutor(path, this));
+        }
+        executor.mutex(() -> {
             File file = new File(modifyPath);
             // 确保父目录存在
             File parentDir = file.getParentFile();
@@ -189,7 +230,44 @@ public class FileUtil {
         });
     }
 
-    private static StandardOpenOption reflectMode(int mode) {
+    public void delete(@NonNull String path) {
+        final String modifyPath = resolvePath(path);
+        FileExecutor executor;
+        synchronized(transactionLock) {
+            executor = transaction.computeIfAbsent(modifyPath, s -> new FileExecutor(path, this));
+        }
+        executor.mutex(() -> {
+            File file = new File(modifyPath);
+            if(!file.exists()) {
+                return;
+            }
+            if(file.isFile()) {
+                boolean successful = file.delete();
+            }
+            if(file.isDirectory()) {
+                boolean successful = deleteFolder(file);
+            }
+        });
+    }
+
+    private boolean deleteFolder(@NonNull File file) {
+        if(file.isFile()) {
+            return file.delete();
+        }
+        if(!file.isDirectory()) { return true; }
+        File[] files = file.listFiles();
+        if(files == null) {
+            return true;
+        }
+        for(File f : files) {
+            if(!deleteFolder(f)) {
+                return false;
+            }
+        }
+        return file.delete();
+    }
+
+    private StandardOpenOption reflectMode(int mode) {
         return mode == WriteFileCallback.MODE_APPEND ? StandardOpenOption.APPEND : StandardOpenOption.WRITE;
     }
 
@@ -199,27 +277,17 @@ public class FileUtil {
      * @param path 输入路径（相对或绝对）
      * @return 解析后的Path对象
      */
-     private static String resolvePath(String path) {
+    private String resolvePath(String path) {
         // Paths.get()会自动处理相对路径和绝对路径
         // 相对路径将基于当前工作目录解析
         return Paths.get(path).toAbsolutePath().normalize().toString();
-     }
+    }
 
-     private static final class Task {
-         public String taskName;
-         public DispatcherQueue.Task task;
+    @Override
+    public void taskEmptyCallback(String path, FileExecutor executor) {
+        synchronized(transactionLock) {
+            transaction.remove(path);
+        }
+    }
 
-         @Override
-         public boolean equals(Object obj) {
-             if(obj instanceof Task t) {
-                 return taskName.equals(t.taskName);
-             }
-             return false;
-         }
-
-         @Override
-         public int hashCode() {
-             return Objects.hash(taskName);
-         }
-     }
 }

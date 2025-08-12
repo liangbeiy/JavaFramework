@@ -11,7 +11,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-public class TimeUtil {
+public final class TimeUtil {
     // 常用时间格式
     public static final String FORMAT_ISO = "yyyy-MM-dd'T'HH:mm:ss'Z'";
     public static final String FORMAT_COMMON = "yyyy-MM-dd HH:mm:ss.SSS";

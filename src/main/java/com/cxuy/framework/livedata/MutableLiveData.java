@@ -5,7 +5,7 @@
 
 package com.cxuy.framework.livedata;
 
-import com.cxuy.framework.util.DispatcherQueue;
+import com.cxuy.framework.coroutine.DispatcherQueue;
 
 public class MutableLiveData<T> extends LiveData<T> {
 

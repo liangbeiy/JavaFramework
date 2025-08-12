@@ -5,6 +5,8 @@
 
 package com.cxuy.framework.util;
 
+import com.cxuy.framework.coroutine.DispatcherQueue;
+
 import java.util.*;
 
 public final class CachePool<K, M> {
@@ -23,7 +25,7 @@ public final class CachePool<K, M> {
     private final Object nodePoolLock = new Object(); 
     private final Queue<Node<K, M>> nodePool = new LinkedList<>(); 
 
-    private final DispatcherQueue worker = new DispatcherQueue(DISPATCHER_NAME); 
+    private final DispatcherQueue worker = new DispatcherQueue(DISPATCHER_NAME);
 
     private final Map<K, Node<K, M>> searchMap = new HashMap<>(); 
     private final Node<K, M> head = new Node<>(); 

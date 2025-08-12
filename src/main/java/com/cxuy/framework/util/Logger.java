@@ -6,6 +6,7 @@
 package com.cxuy.framework.util;
 
 import com.cxuy.framework.annotation.NonNull;
+import com.cxuy.framework.util.io.FileManager;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -42,7 +43,7 @@ public final class Logger {
             Logger.addHandler(INSTANCE.printer);
             Logger.addHandler((level, tag, message, throwable) -> {
                 String log = PrintHandler.generateLog(level, tag, message, throwable);
-                FileUtil.append("./logger/logcat.log", log);
+                FileManager.getInstance().append("./logger/logcat.log", log);
             });
         }
     }

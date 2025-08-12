@@ -6,7 +6,7 @@
 package com.cxuy.framework.eventbus;
 
 import com.cxuy.framework.eventbus.annotate.Subscribe;
-import com.cxuy.framework.util.DispatcherQueue;
+import com.cxuy.framework.coroutine.DispatcherQueue;
 import com.cxuy.framework.util.Logger;
 
 import java.lang.reflect.InvocationTargetException;
