@@ -6,10 +6,13 @@
 package com.cxuy.http.client;
 
 import com.cxuy.framework.constant.Constant;
+import com.cxuy.framework.util.TextUtil;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Request {
     public final Method method;
@@ -32,6 +35,9 @@ public class Request {
     }
     
     public static class Builder {
+        // 匹配 {key} 格式的正则表达式（key 可包含字母、数字、下划线）
+        private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{([a-zA-Z0-9_]+)}");
+
         private Method mMethod = Method.GET;
         private String mUrl;
         private Map<String, Object> mHeaders;
@@ -48,6 +54,22 @@ public class Request {
 
         public Builder url(String url) {
             this.mUrl = url;
+            return this;
+        }
+
+        public Builder setSubPath(String key, String subPath) {
+            Matcher matcher = PLACEHOLDER_PATTERN.matcher(mUrl);
+            StringBuilder result = new StringBuilder();
+            while (matcher.find()) {
+                String matchKey = matcher.group(1);
+                if (TextUtil.equals(key, matchKey)) {
+                    matcher.appendReplacement(result, subPath);
+                } else {
+                    matcher.appendReplacement(result, matcher.group(0));
+                }
+            }
+            matcher.appendTail(result);
+            mUrl = result.toString();
             return this;
         }
 
