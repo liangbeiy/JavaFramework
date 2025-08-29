@@ -7,6 +7,9 @@ package com.cxuy.server;
 
 import com.cxuy.framework.annotation.NonNull;
 import com.cxuy.framework.annotation.Nullable;
+import com.cxuy.framework.lifecycle.LifecycleObserver;
+import com.cxuy.framework.lifecycle.LifecycleOwner;
+import com.cxuy.framework.lifecycle.LifecycleState;
 import com.cxuy.framework.util.JsonUtil;
 import com.cxuy.framework.util.Logger;
 import com.cxuy.framework.util.TextUtil;
@@ -26,7 +29,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class SimpleHttpServer implements Server {
+public class SimpleHttpServer implements Server, LifecycleOwner {
 
     private static final String TAG = "SimpleServer";
 
@@ -35,15 +38,30 @@ public class SimpleHttpServer implements Server {
 
     private static final String METHOD_GET = "GET";
 
-    private final AtomicBoolean isStart = new AtomicBoolean(false);
     private int port = DEFAULT_PORT;
     private HttpServer server;
 
-    public SimpleHttpServer() {  }
+    private final Object stateLock = new Object();
+    private LifecycleState state = LifecycleState.ANY;
+
+    private final Set<LifecycleObserver> observers = Collections.synchronizedSet(new HashSet<>());
+
+    public SimpleHttpServer() {
+        this(null);
+    }
+
+    public SimpleHttpServer(LifecycleObserver observer) {
+        if(observer != null) {
+            addObserver(observer);
+        }
+        setState(LifecycleState.INITED);
+    }
 
     public void start() {
-        if(isStart.get()) {
-            return;
+        synchronized(stateLock) {
+            if(state.rawValue > LifecycleState.DID_START.rawValue) {
+                return;
+            }
         }
         int nowTimes = 0;
         while(nowTimes < MAX_RETRY_TIMES && server == null) {
@@ -62,17 +80,17 @@ public class SimpleHttpServer implements Server {
         registerHandler();
 
         server.start();
-        isStart.set(true);
+        setState(LifecycleState.DID_START);
         Logger.d(TAG, "SimpleHttpServer is running at " + port + " port. ");
     }
 
     public void stop() {
-        if(!isStart.get()) {
+        if(state.rawValue < LifecycleState.DID_START.rawValue) {
             return;
         }
         server.stop(0);
         server = null;
-        isStart.set(false);
+        setState(LifecycleState.DID_STOP);
     }
 
     private void registerHandler() {
@@ -132,6 +150,39 @@ public class SimpleHttpServer implements Server {
             Logger.e(TAG, "An exception occurred while creating instance", e);
             return null;
         }
+    }
+
+    @Override
+    public LifecycleState getState() {
+        synchronized(stateLock) {
+            return this.state;
+        }
+    }
+
+    @Override
+    public void setState(LifecycleState state) {
+        synchronized(stateLock) {
+            this.state = state;
+        }
+        for(LifecycleObserver observer : observers) {
+            observer.lifecycleOnChanged(this, state);
+        }
+    }
+
+    @Override
+    public void addObserver(LifecycleObserver observer) {
+        if(observer == null || observers.contains(observer)) {
+            return;
+        }
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(LifecycleObserver observer) {
+        if(observer == null || !observers.contains(observer)) {
+            return;
+        }
+        observers.remove(observer);
     }
 
     public static abstract class Handler implements com.sun.net.httpserver.HttpHandler {

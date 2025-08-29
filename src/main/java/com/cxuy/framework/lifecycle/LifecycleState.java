@@ -27,7 +27,7 @@ public enum LifecycleState {
     WILL_DESTROY(11), 
     DID_DESTROY(12); 
 
-    private final int rawValue; 
+    public final int rawValue;
 
     private LifecycleState(int rawValue) {
         this.rawValue = rawValue; 
