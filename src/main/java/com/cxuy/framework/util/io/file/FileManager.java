@@ -3,12 +3,12 @@
  * Licensed under the MIT License. See LICENSE file in the project root for full license information.
  */
 
-package com.cxuy.framework.util.io;
+package com.cxuy.framework.util.io.file;
 
 import com.cxuy.framework.annotation.NonNull;
 import com.cxuy.framework.annotation.Nullable;
 import com.cxuy.framework.util.Logger;
-import com.cxuy.framework.util.io.FileExecutor.FileExecutorIsEmptyCallback;
+import com.cxuy.framework.util.io.file.FileExecutor.FileExecutorIsEmptyCallback;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;

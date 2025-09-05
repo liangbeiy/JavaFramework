@@ -5,6 +5,7 @@
 
 package com.cxuy.framework.util;
 
+import com.cxuy.framework.annotation.Nullable;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 
@@ -32,8 +33,38 @@ public final class JsonUtil {
         }
     }
 
-    public static <T> T fromJson(String json, Class<T> rawType, Type... argumentTypes) {
-        Type type = TypeToken.getParameterized(rawType, argumentTypes).getType();
+    @Nullable
+    public static <T> T getValue(String jsonStr, String key, Class<T> clazz) {
+        return getValue(jsonStr, key, clazz, null);
+    }
+
+    @Nullable
+    public static <T> T getValue(String jsonStr, String key, Class<T> clazz, T defaultValue) {
+        if(TextUtil.isEmpty(jsonStr) || TextUtil.isEmpty(key)) {
+            return defaultValue;
+        }
+        JsonObject jsonObject = INSTANCE.fromJson(jsonStr, JsonObject.class);
+        String valueJson = jsonObject.get(key).getAsString();
+        T value = fromJson(valueJson, clazz);
+        return value == null ? defaultValue : value;
+    }
+
+    @Nullable
+    public static String optString(String jsonStr, String key) {
+        return optString(jsonStr, key, null);
+    }
+
+    @Nullable
+    public static String optString(String jsonStr, String key, String defaultValue) {
+        if(TextUtil.isEmpty(jsonStr) || TextUtil.isEmpty(key)) {
+            return defaultValue;
+        }
+        JsonObject jsonObject = INSTANCE.fromJson(jsonStr, JsonObject.class);
+        return jsonObject.get(key).getAsString();
+    }
+
+    public static <T> T fromJson(String json, Class<T> rawType, Type... templateTypes) {
+        Type type = TypeToken.getParameterized(rawType, templateTypes).getType();
         return fromJson(json, type);
     }
 
