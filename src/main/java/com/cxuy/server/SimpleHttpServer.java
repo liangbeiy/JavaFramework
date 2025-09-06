@@ -7,6 +7,7 @@ package com.cxuy.server;
 
 import com.cxuy.framework.annotation.NonNull;
 import com.cxuy.framework.annotation.Nullable;
+import com.cxuy.framework.context.Context;
 import com.cxuy.framework.lifecycle.LifecycleObserver;
 import com.cxuy.framework.lifecycle.LifecycleOwner;
 import com.cxuy.framework.lifecycle.LifecycleState;
@@ -46,11 +47,13 @@ public class SimpleHttpServer implements Server, LifecycleOwner {
 
     private final Set<LifecycleObserver> observers = Collections.synchronizedSet(new HashSet<>());
 
-    public SimpleHttpServer() {
-        this(null);
+    private final Context context;
+    public SimpleHttpServer(Context context) {
+        this(context, null);
     }
 
-    public SimpleHttpServer(LifecycleObserver observer) {
+    public SimpleHttpServer(Context context, LifecycleObserver observer) {
+        this.context = context.getFrameworkContext();
         if(observer != null) {
             addObserver(observer);
         }
@@ -95,7 +98,7 @@ public class SimpleHttpServer implements Server, LifecycleOwner {
 
     private void registerHandler() {
         try {
-            Set<Class<?>> domain = HttpHandlerScanner.scanClass();
+            Set<Class<?>> domain = HttpHandlerScanner.scanClass(context);
             for (Class<?> clazz : domain) {
                 // 验证是否继承自Handler
                 if (!Handler.class.isAssignableFrom(clazz)) {

@@ -15,18 +15,29 @@ import java.util.Set;
 
 public class FrameworkContext extends Context implements LifecycleOwner {
 
+    private final BuildConfig buildConfig;
     private final Object stateLock = new Object();
     private LifecycleState state;
 
     private final Set<LifecycleObserver> observers = Collections.synchronizedSet(new HashSet<>());
 
-    public FrameworkContext(String root) {
+    public FrameworkContext(String root, BuildConfig buildConfig) {
         super(root);
+        this.buildConfig = buildConfig;
         setState(LifecycleState.INITED);
     }
 
+    public void onCreate() {  }
+    public void onDestroy() {
+        setState(LifecycleState.WILL_DESTROY);
+    }
+
+    public BuildConfig getBuildConfig() {
+        return buildConfig;
+    }
+
     public void create() {
-        handleDestroy();
+        handleCreate();
     }
 
     public void destroy() {
@@ -43,10 +54,6 @@ public class FrameworkContext extends Context implements LifecycleOwner {
         setState(LifecycleState.WILL_DESTROY);
         onDestroy();
         setState(LifecycleState.DID_DESTROY);
-    }
-    public void onCreate() {  }
-    public void onDestroy() {
-        setState(LifecycleState.WILL_DESTROY);
     }
 
     @Override
@@ -82,5 +89,29 @@ public class FrameworkContext extends Context implements LifecycleOwner {
             return;
         }
         observers.remove(observer);
+    }
+
+    @Override
+    public ClassLoader getClassLoader() {
+        ClassLoader classLoader = null;
+        try {
+            classLoader = Thread.currentThread().getContextClassLoader();
+        } catch (Throwable throwable) {
+            // ignored 线程上下文类加载器不可用时忽略
+        }
+        if (classLoader == null) {
+            // 使用当前类的类加载器
+            classLoader = FrameworkContext.class.getClassLoader();
+            if (classLoader == null) {
+                // 最后使用系统类加载器
+                classLoader = ClassLoader.getSystemClassLoader();
+            }
+        }
+        return classLoader;
+    }
+
+    @Override
+    protected FrameworkContext getFrameworkContextInternal() {
+        return null;
     }
 }

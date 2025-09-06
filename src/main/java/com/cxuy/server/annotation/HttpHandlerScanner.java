@@ -5,6 +5,7 @@
 
 package com.cxuy.server.annotation;
 
+import com.cxuy.framework.context.Context;
 import com.cxuy.framework.util.Logger;
 
 import java.io.File;
@@ -21,13 +22,15 @@ import java.util.jar.JarFile;
 
 public final class HttpHandlerScanner {
     private static final String TAG = HttpHandlerScanner.class.getName();
-    public static Set<Class<?>> scanClass() {
+    public static Set<Class<?>> scanClass(Context context) {
         Class<?> httpHandlerAnnotation = HttpHandler.class;
         Set<Class<?>> result = new HashSet<>();
+        if(context == null) {
+            return result;
+        }
         try {
             // 获取当前线程的类加载器
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-
+            ClassLoader classLoader = context.getClassLoader();
             // 获取类路径下的所有资源
             Enumeration<URL> resources = classLoader.getResources("");
             while (resources.hasMoreElements()) {

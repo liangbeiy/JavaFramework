@@ -12,7 +12,7 @@ public abstract class Context {
     @NonNull
     private final String rootDir;
 
-    public Context(String root) {
+    protected Context(String root) {
         this.rootDir = root;
     }
 
@@ -24,6 +24,10 @@ public abstract class Context {
         if(this instanceof FrameworkContext frameworkContext) {
             return frameworkContext;
         }
-        return null;
+        return getFrameworkContextInternal();
     }
+
+    public abstract ClassLoader getClassLoader();
+
+    protected abstract FrameworkContext getFrameworkContextInternal();
 }
