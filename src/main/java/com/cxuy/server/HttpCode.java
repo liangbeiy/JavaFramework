@@ -13,7 +13,7 @@ public enum HttpCode {
     OUT_OF_SERVER(503);
 
     public final int rawValue;
-    private HttpCode(int code) {
+    HttpCode(int code) {
         this.rawValue = code;
     }
 }
