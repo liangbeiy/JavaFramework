@@ -3,14 +3,17 @@
  * Licensed under the MIT License. See LICENSE file in the project root for full license information.
  */
 
-package com.cxuy.framework.util.io.file;
+package com.cxuy.framework.io.file;
 
 import com.cxuy.framework.annotation.NonNull;
 import com.cxuy.framework.annotation.Nullable;
 import com.cxuy.framework.util.Logger;
-import com.cxuy.framework.util.io.file.FileExecutor.FileExecutorIsEmptyCallback;
+import com.cxuy.framework.io.file.FileExecutor.FileExecutorIsEmptyCallback;
+import com.cxuy.framework.io.file.exception.CreateFileException;
+import com.cxuy.framework.io.file.exception.ParentFileException;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -84,6 +87,38 @@ public class FileManager implements FileExecutorIsEmptyCallback {
         return file.exists();
     }
 
+    public void createFile(String path) throws ParentFileException, CreateFileException {
+        String modifyPath = resolvePath(path);
+        if(isExist(modifyPath)) {
+            return;
+        }
+        FileExecutor executor;
+        synchronized(transactionLock) {
+            executor = transaction.computeIfAbsent(modifyPath, s -> new FileExecutor(path, this));
+        }
+        executor.mutex(() -> {
+            File file = new File(modifyPath);
+            if(file.exists()) {
+                return;
+            }
+            File parentDir = file.getParentFile();
+            if(parentDir != null && !parentDir.exists()) {
+                boolean success = parentDir.mkdirs();
+                if(!success) {
+                    throw new ParentFileException("parent dir not exists");
+                }
+            }
+            try {
+                boolean success = file.createNewFile();
+                if(!success) {
+                    throw new CreateFileException("cannot create file whose path is " + path);
+                }
+            } catch (IOException _) {
+                throw new CreateFileException("cannot create file whose path is " + path);
+            }
+        });
+    }
+
     /**
      * 获取当前工作目录下的绝对路径
      * @return 路径
@@ -152,7 +187,7 @@ public class FileManager implements FileExecutorIsEmptyCallback {
 
     private void write(@NonNull String path, @Nullable byte[] content, int mode, @Nullable WriteFileCallback<byte[]> callback) {
         final String modifyPath = resolvePath(path);
-        final StandardOpenOption option = reflectMode(mode);
+        final StandardOpenOption[] options = reflectMode(mode);
         FileExecutor executor;
         synchronized(transactionLock) {
             executor = transaction.computeIfAbsent(modifyPath, s -> new FileExecutor(path, this));
@@ -176,7 +211,7 @@ public class FileManager implements FileExecutorIsEmptyCallback {
                     }
                     return;
                 }
-                Files.write(Paths.get(modifyPath), content, StandardOpenOption.CREATE, option);
+                Files.write(Paths.get(modifyPath), content, options);
                 if(callback != null) {
                     callback.callback(path, content, mode, true);
                 }
@@ -191,7 +226,7 @@ public class FileManager implements FileExecutorIsEmptyCallback {
 
     private void write(@NonNull String path, @Nullable String content, int mode, @Nullable WriteFileCallback<String> callback) {
         final String modifyPath = resolvePath(path);
-        final StandardOpenOption option = reflectMode(mode);
+        final StandardOpenOption[] options = reflectMode(mode);
         FileExecutor executor;
         synchronized(transactionLock) {
             executor = transaction.computeIfAbsent(modifyPath, s -> new FileExecutor(path, this));
@@ -216,8 +251,7 @@ public class FileManager implements FileExecutorIsEmptyCallback {
                     return;
                 }
                 // 自动处理文件创建和流关闭，支持追加模式
-                Files.writeString(Paths.get(modifyPath), content, StandardCharsets.UTF_8,
-                        StandardOpenOption.CREATE, option);
+                Files.writeString(Paths.get(modifyPath), content, StandardCharsets.UTF_8, options);
                 if(callback != null) {
                     callback.callback(path, content, mode, true);
                 }
@@ -267,8 +301,10 @@ public class FileManager implements FileExecutorIsEmptyCallback {
         return file.delete();
     }
 
-    private StandardOpenOption reflectMode(int mode) {
-        return mode == WriteFileCallback.MODE_APPEND ? StandardOpenOption.APPEND : StandardOpenOption.WRITE;
+    private StandardOpenOption[] reflectMode(int mode) {
+        return mode == WriteFileCallback.MODE_APPEND ?
+                new StandardOpenOption[] { StandardOpenOption.APPEND } :
+                new StandardOpenOption[] { StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING };
     }
 
     /**

@@ -6,7 +6,7 @@
 package com.cxuy.framework.util;
 
 import com.cxuy.framework.annotation.NonNull;
-import com.cxuy.framework.util.io.file.FileManager;
+import com.cxuy.framework.io.file.FileManager;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

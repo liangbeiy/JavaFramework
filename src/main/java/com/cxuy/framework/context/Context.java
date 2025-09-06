@@ -19,4 +19,11 @@ public abstract class Context {
     public String getRootDir() {
         return this.rootDir;
     }
+
+    public FrameworkContext getFrameworkContext() {
+        if(this instanceof FrameworkContext frameworkContext) {
+            return frameworkContext;
+        }
+        return null;
+    }
 }

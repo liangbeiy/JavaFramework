@@ -63,9 +63,9 @@ public final class JsonUtil {
         return jsonObject.get(key).getAsString();
     }
 
-    public static <T> T fromJson(String json, Class<T> rawType, Type... templateTypes) {
+    public static <T> T fromJson(String json, Type rawType, Type... templateTypes) {
         Type type = TypeToken.getParameterized(rawType, templateTypes).getType();
-        return fromJson(json, type);
+        return INSTANCE.fromJson(json, type);
     }
 
     public static <T> T[] fromJsonToArray(String json, Class<T[]> clazz) {
