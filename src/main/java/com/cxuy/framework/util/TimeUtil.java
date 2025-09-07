@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025 liangbeiyuan.
+ * Licensed under the MIT License. See LICENSE file in the project root for full license information.
+ */
+
 package com.cxuy.framework.util;
 
 import java.time.Instant;
@@ -6,7 +11,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-public class TimeUtil {
+public final class TimeUtil {
     // 常用时间格式
     public static final String FORMAT_ISO = "yyyy-MM-dd'T'HH:mm:ss'Z'";
     public static final String FORMAT_COMMON = "yyyy-MM-dd HH:mm:ss.SSS";

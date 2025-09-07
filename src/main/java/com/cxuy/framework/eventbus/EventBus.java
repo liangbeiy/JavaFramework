@@ -1,4 +1,13 @@
+/*
+ * Copyright (c) 2025 liangbeiyuan.
+ * Licensed under the MIT License. See LICENSE file in the project root for full license information.
+ */
+
 package com.cxuy.framework.eventbus;
+
+import com.cxuy.framework.eventbus.annotate.Subscribe;
+import com.cxuy.framework.coroutine.DispatchQueue;
+import com.cxuy.framework.util.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -7,27 +16,23 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.cxuy.framework.eventbus.annotate.Subscribe;
-import com.cxuy.framework.util.DispatcherQueue;
-import com.cxuy.framework.util.Logger;
-
 public class EventBus {
     private static final String TAG = "EventBus"; 
 
     public static final EventBus standard = new EventBus(); 
 
-    private static final String WOKER_NAME = "com.util.EventBus#Worker"; 
+    private static final String WORKER_NAME = "com.util.EventBus#Worker";
 
     private final Map<Class<?>, Set<SubscriberWrapper>> subscribers = new HashMap<>(); 
     private final Map<Object, SubscriberWrapper> registers = new HashMap<>(); 
 
-    private DispatcherQueue worker = new DispatcherQueue(WOKER_NAME); 
+    private final DispatchQueue worker = new DispatchQueue(WORKER_NAME);
 
     public void register(Object subscriber) {
         if(subscriber == null) {
             return; 
         }
-        worker.async(() -> {
+        worker.async((context) -> {
             if(registers.containsKey(subscriber)) {
                 return; 
             }
@@ -51,7 +56,7 @@ public class EventBus {
         if(event == null) {
             return; 
         }
-        worker.async(() -> {
+        worker.async((context) -> {
             Class<?> eventType = event.getClass(); 
             Set<SubscriberWrapper> wrappers = subscribers.get(eventType); 
             for(SubscriberWrapper wrapper : wrappers) {
@@ -64,7 +69,7 @@ public class EventBus {
         if(subscriber == null) {
             return; 
         }
-        worker.async(() -> {
+        worker.async((context) -> {
             SubscriberWrapper wrapper = registers.get(subscriber); 
             if(wrapper == null) {
                 return; 

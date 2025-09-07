@@ -1,12 +1,15 @@
+/*
+ * Copyright (c) 2025 liangbeiyuan.
+ * Licensed under the MIT License. See LICENSE file in the project root for full license information.
+ */
+
 package com.cxuy.framework.livedata;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import com.cxuy.framework.lifecycle.LifecycleOwner;
-import com.cxuy.framework.util.DispatcherQueue;
+import com.cxuy.framework.coroutine.DispatchQueue;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class LiveData<T> {
 
@@ -29,7 +32,7 @@ public class LiveData<T> {
         if(owner == null) {
             return;
         }
-        DispatcherQueue.standard.async(() -> {
+        DispatchQueue.standard.async((context) -> {
             LifecycleOwnerWrapper wrapper = null;
             for(LifecycleOwnerWrapper w : observers.keySet()) {
                 if(owner == w.owner) {
