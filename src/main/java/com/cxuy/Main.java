@@ -37,39 +37,5 @@ public class Main {
         context.destroy();
     }
 
-    public static void run(Context context) {
-//        I protocol = new Protocol.Builder().baseUrl("http://localhost:5867").build().create(I.class);
-//        SimpleHttpServer server = new SimpleHttpServer(context, new LifecycleObserver() {
-//            @Override
-//            public void lifecycleOnChanged(LifecycleOwner owner, LifecycleState state) {
-//                if(state == LifecycleState.DID_START) {
-//                    Client.getInstance().async(protocol.login("kpb", "123"), new Client.ResponseCallback() {
-//                        @Override
-//                        public void response(Client client, Request request, Response response) {
-//                            Logger.d(TAG, response.body.string());
-//                        }
-//                    });
-//                }
-//            }
-//        });
-//        server.start();
-
-        DispatchGroup group = new DispatchGroup();
-        group.async(DispatcherQueue.io, () -> {
-            Logger.d(TAG, "hello1");
-        });
-        group.async(DispatcherQueue.io, () -> {
-            Logger.d(TAG, "hello2");
-        });
-        group.notify(DispatcherQueue.standard, () -> {
-            Logger.d(TAG, "notify");
-        });
-    }
-
-    public interface I {
-        @GET(path = "/hello")
-        Request hello(@Param("name") String name);
-        @GET(path = "/login")
-        Request login(@Param("username") String name, @Param("pwd")String password);
-    }
+    public static void run(Context context) {  }
 }
