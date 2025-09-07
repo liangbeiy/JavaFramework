@@ -11,11 +11,13 @@ import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.concurrent.*;
 
-public class DispatcherQueue {
-    public interface Task extends Runnable {  }
+public class DispatchQueue {
+    public interface Task {
+        void run(DispatchContext context);
+    }
 
     public interface StatusObserver {
-        void onChanged(DispatcherQueue queue, Status status);
+        void onChanged(DispatchQueue queue, Status status);
     }
 
     /**
@@ -27,7 +29,7 @@ public class DispatcherQueue {
          * 任务复用
          * 如果这个任务需要重复使用，返回true，默认返回false
          *
-         * @apiNote 当某队列具有无限制可复用IDLE任务时，需要使用{@link DispatcherQueue#shutdown()}系列方法暂停分发队列
+         * @apiNote 当某队列具有无限制可复用IDLE任务时，需要使用{@link DispatchQueue#shutdown()}系列方法暂停分发队列
          *
          * @return 是否返回为复用任务
          */
@@ -42,16 +44,16 @@ public class DispatcherQueue {
     private static int coroutinePoolRefCount = 0;
     private static ThreadPoolExecutor coroutinePool;
 
-    private static final String DEFAULT_DISPATCHER_QUEUE = "DispatcherQueue#default";
-    private static final String DEFAULT_DISPATCHER_IO = "DispatcherQueue#IO";
+    private static final String DEFAULT_DISPATCHER_QUEUE = "DispatchQueue#default";
+    private static final String DEFAULT_DISPATCHER_IO = "DispatchQueue#IO";
     private static final String DEFAULT_DISPATCHER_NAME = "default_DispatcherQueue#Name";
     private static final int ITEM_POOL_MAX = 20;
 
     private static final Object TOKEN_LOCK = new Object();
     private static final Set<String> TOKEN_SET = new HashSet<>();
 
-    public static final DispatcherQueue standard = new DispatcherQueue(DEFAULT_DISPATCHER_QUEUE);
-    public static final DispatcherQueue io = new DispatcherQueue(DEFAULT_DISPATCHER_IO, true);
+    public static final DispatchQueue standard = new DispatchQueue(DEFAULT_DISPATCHER_QUEUE);
+    public static final DispatchQueue io = new DispatchQueue(DEFAULT_DISPATCHER_IO, true);
 
     protected final String name;
     protected final boolean isCoroutine;
@@ -65,6 +67,8 @@ public class DispatcherQueue {
     private final Object threadLock = new Object();
     protected Thread thread;
 
+    private final Map<Task, DispatchContext> contextMap = new HashMap<>();
+
     private final Object taskQueueLock = new Object();
     protected final PriorityQueue<TaskItem> taskQueue = new PriorityQueue<>();
     protected volatile long lastIDLETimestamp;
@@ -76,19 +80,19 @@ public class DispatcherQueue {
 
     protected long submitTaskId = 0;
 
-    public DispatcherQueue() {
+    public DispatchQueue() {
         this(DEFAULT_DISPATCHER_NAME, false);
     }
 
-    public DispatcherQueue(boolean isCoroutine) {
+    public DispatchQueue(boolean isCoroutine) {
         this(DEFAULT_DISPATCHER_NAME, isCoroutine);
     }
 
-    public DispatcherQueue(String name) {
+    public DispatchQueue(String name) {
         this(name, false);
     }
 
-    public DispatcherQueue(String name, boolean isCoroutine) {
+    public DispatchQueue(String name, boolean isCoroutine) {
         this.name = name;
         this.isCoroutine = isCoroutine;
         setStatus(Status.INIT);
@@ -158,14 +162,22 @@ public class DispatcherQueue {
     }
 
     public void sync(Task task) {
-        sync(0, task);
+        sync(0, null, task);
+    }
+
+    public void sync(Bundle bundle, Task task) {
+        sync(0, bundle, task);
     }
 
     public void sync(long delay, Task task) {
+        sync(delay, null, task);
+    }
+
+    public void sync(long delay, Bundle bundle, Task task) {
         CountDownLatch latch = new CountDownLatch(1);
-        async(delay, () -> {
+        async(delay, bundle, (context) -> {
             try {
-                task.run();
+                task.run(context);
             }
             finally {
                 latch.countDown();
@@ -178,14 +190,32 @@ public class DispatcherQueue {
         }
     }
 
-    public void async(Task task) {
-        async(0, task);
+    public DispatchContext async(Task task) {
+        return async(0, null, task);
     }
 
-    public void async(long delay, Task task) throws DispatcherQueueHasDestroyedException {
+    public DispatchContext async(long delay, Task task) {
+        return async(delay, null, task);
+    }
+
+    public DispatchContext async(Bundle bundle, Task task) {
+        return async(0, bundle, task);
+    }
+
+    public DispatchContext async(long delay, Bundle bundle, Task task) throws DispatcherQueueHasDestroyedException {
         if(status == Status.DESTROY) {
             throw new DispatcherQueueHasDestroyedException(name);
         }
+        if(task == null) {
+            throw new NullPointerException("task not allow nullable");
+        }
+        boolean containContext = contextMap.containsKey(task);
+        if(containContext) {
+            return contextMap.get(task);
+        }
+        DispatchContext context = new DispatchContext(submitTaskId, this);
+        context.setBundle(bundle);
+        contextMap.put(task, context);
         TaskItem item = obtain(delay, task, submitTaskId);
         synchronized(taskQueueLock) {
             if (status == Status.DESTROY) {
@@ -203,6 +233,7 @@ public class DispatcherQueue {
             taskQueueLock.notifyAll();
         }
         createThreadIfNeed();
+        return context;
     }
 
     public void addIdle(IDLETask idle) {
@@ -249,31 +280,35 @@ public class DispatcherQueue {
         }
     }
 
-    private void handleTask(Task task) {
+    protected void handleTask(DispatchContext context, Task task) {
         if(task == null) {
             return;
         }
         if(!isCoroutine || task instanceof IDLETask) {
-            task.run();
+            task.run(context);
             if(task instanceof IDLETask && ((IDLETask)task).reuse()) {
                 TaskItem item = obtain(0, task, submitTaskId);
                 synchronized(taskQueueLock) {
                     taskQueue.offer(item);
                 }
+                return;
             }
+            contextMap.remove(task);
             return;
         }
         ThreadPoolExecutor pool = getOrCreatePool();
         synchronized(REF_POOL_LOCK) {
             if(pool == null || pool.isShutdown()) { // 意外情况，降级处理
-                task.run();
+                task.run(context);
                 return;
             }
             try {
-                pool.submit(task);
+                pool.submit(() -> {
+                    task.run(context);
+                });
             }
             catch(RejectedExecutionException e) { // 降级处理 直接执行
-                task.run();
+                task.run(context);
             }
         }
     }
@@ -364,7 +399,7 @@ public class DispatcherQueue {
         @Override
         public void run() {
             while(true) {
-                DispatcherQueue queue = this.ref.get();
+                DispatchQueue queue = this.ref.get();
                 if(queue == null || queue.status == Status.DESTROY) {
                     return;
                 }
@@ -374,7 +409,10 @@ public class DispatcherQueue {
                     needExecute = fetchTask(this.ref);
                     queue = this.ref.get();
                     if(queue != null && needExecute != null) {
-                        queue.handleTask(needExecute);
+                        DispatchContext context = queue.contextMap.get(needExecute);
+                        if(!context.isCancel()) {
+                            queue.handleTask(context, needExecute);
+                        }
                     }
                 }
                 catch (Exception e) {
@@ -399,7 +437,7 @@ public class DispatcherQueue {
         }
 
         private Task fetchTask(DispatcherQueueWeakRef ref) throws NeedDestroyDispatcherQueueException, InterruptedException {
-            DispatcherQueue q = ref.get();
+            DispatchQueue q = ref.get();
             if(q == null || q.status == Status.DESTROY) {
                 return null;
             }
@@ -523,8 +561,7 @@ public class DispatcherQueue {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             TaskItem taskItem = (TaskItem) o;
-            return runMills == taskItem.runMills &&
-                    (Objects.equals(task, taskItem.task));
+            return runMills == taskItem.runMills && (Objects.equals(task, taskItem.task));
         }
 
         @Override
@@ -540,8 +577,8 @@ public class DispatcherQueue {
         }
     }
 
-    private static class DispatcherQueueWeakRef extends WeakReference<DispatcherQueue> {
-        public DispatcherQueueWeakRef(DispatcherQueue referent) {
+    private static class DispatcherQueueWeakRef extends WeakReference<DispatchQueue> {
+        public DispatcherQueueWeakRef(DispatchQueue referent) {
             super(referent);
         }
     }

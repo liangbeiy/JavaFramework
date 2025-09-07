@@ -96,7 +96,7 @@ public class FileManager implements FileExecutorIsEmptyCallback {
         synchronized(transactionLock) {
             executor = transaction.computeIfAbsent(modifyPath, s -> new FileExecutor(path, this));
         }
-        executor.mutex(() -> {
+        executor.mutex((context) -> {
             File file = new File(modifyPath);
             if(file.exists()) {
                 return;
@@ -141,7 +141,7 @@ public class FileManager implements FileExecutorIsEmptyCallback {
         synchronized(transactionLock) {
             executor = transaction.computeIfAbsent(modifyPath, s -> new FileExecutor(path, this));
         }
-        executor.share(() -> {
+        executor.share((context) -> {
             try {
                 byte[] bytes = Files.readAllBytes(Paths.get(modifyPath));
                 callback.callback(path, new String(bytes, StandardCharsets.UTF_8));
@@ -192,7 +192,7 @@ public class FileManager implements FileExecutorIsEmptyCallback {
         synchronized(transactionLock) {
             executor = transaction.computeIfAbsent(modifyPath, s -> new FileExecutor(path, this));
         }
-        executor.mutex(() -> {
+        executor.mutex((context) -> {
             File file = new File(modifyPath);
             // 确保父目录存在
             File parentDir = file.getParentFile();
@@ -231,7 +231,7 @@ public class FileManager implements FileExecutorIsEmptyCallback {
         synchronized(transactionLock) {
             executor = transaction.computeIfAbsent(modifyPath, s -> new FileExecutor(path, this));
         }
-        executor.mutex(() -> {
+        executor.mutex((context) -> {
             File file = new File(modifyPath);
             // 确保父目录存在
             File parentDir = file.getParentFile();
@@ -270,7 +270,7 @@ public class FileManager implements FileExecutorIsEmptyCallback {
         synchronized(transactionLock) {
             executor = transaction.computeIfAbsent(modifyPath, s -> new FileExecutor(path, this));
         }
-        executor.mutex(() -> {
+        executor.mutex((context) -> {
             File file = new File(modifyPath);
             if(!file.exists()) {
                 return;

@@ -16,7 +16,7 @@ public class DispatchGroup {
     @Nullable
     private Transaction.Builder transactionBuilder;
 
-    public void async(DispatcherQueue queue, DispatcherQueue.Task task) {
+    public void async(DispatchQueue queue, DispatchQueue.Task task) {
         if(queue == null || task == null) {
             return;
         }
@@ -24,11 +24,27 @@ public class DispatchGroup {
             if(transactionBuilder == null) {
                 this.transactionBuilder = new Transaction.Builder();
             }
-            transactionBuilder.append(queue, task);
+            transactionBuilder.append(queue, null, task);
         }
     }
 
-    public void notify(DispatcherQueue queue, DispatcherQueue.Task task) {
+    public void async(DispatchQueue queue, Bundle bundle, DispatchQueue.Task task) {
+        if(queue == null || task == null) {
+            return;
+        }
+        synchronized(builderLock) {
+            if(transactionBuilder == null) {
+                this.transactionBuilder = new Transaction.Builder();
+            }
+            transactionBuilder.append(queue, bundle, task);
+        }
+    }
+
+    public void notify(DispatchQueue queue, DispatchQueue.Task task) {
+        notify(queue, null, task);
+    }
+
+    public void notify(DispatchQueue queue, Bundle bundle, DispatchQueue.Task task) {
         if(queue == null || task == null) {
             return;
         }
@@ -42,19 +58,20 @@ public class DispatchGroup {
                     .build();
             transactionBuilder = null;
         }
-        DispatcherQueue.standard.async(() -> {
-            Map<DispatcherQueue.Task, DispatcherQueue> tasks = newTransaction.tasks;
+        DispatchQueue.standard.async((context) -> {
+            Map<DispatchQueue.Task, DispatchQueue> tasks = newTransaction.tasks;
+            Map<DispatchQueue.Task, Bundle> bundles = newTransaction.bundles;
             final Semaphore semaphore = new Semaphore(0);
-            for(Map.Entry<DispatcherQueue.Task, DispatcherQueue> entry : tasks.entrySet()) {
-                entry.getValue().async(() -> {
-                    entry.getKey().run();
+            for(Map.Entry<DispatchQueue.Task, DispatchQueue> entry : tasks.entrySet()) {
+                entry.getValue().async(bundles.get(entry.getKey()), (executeContext) -> {
+                    entry.getKey().run(executeContext);
                     semaphore.release();
                 });
             }
-            DispatcherQueue.io.async(() -> {
+            DispatchQueue.io.async(bundle, (notifyContext) -> {
                 try {
                     semaphore.acquire(tasks.size());
-                    newTransaction.notifyQueue.async(newTransaction.notifyTask);
+                    newTransaction.notifyQueue.async(bundle, newTransaction.notifyTask);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
@@ -63,38 +80,45 @@ public class DispatchGroup {
     }
 
     private static final class Transaction {
-        public final Map<DispatcherQueue.Task, DispatcherQueue> tasks;
-        public DispatcherQueue notifyQueue;
-        public DispatcherQueue.Task notifyTask;
-        public Transaction(Map<DispatcherQueue.Task, DispatcherQueue> tasks, DispatcherQueue notifyQueue, DispatcherQueue.Task notifyTask) {
+        public final Map<DispatchQueue.Task, Bundle> bundles;
+        public final Map<DispatchQueue.Task, DispatchQueue> tasks;
+        public DispatchQueue notifyQueue;
+        public DispatchQueue.Task notifyTask;
+        public Transaction(Map<DispatchQueue.Task, Bundle> bundles, Map<DispatchQueue.Task, DispatchQueue> tasks, DispatchQueue notifyQueue, DispatchQueue.Task notifyTask) {
+            this.bundles = bundles;
             this.tasks = tasks;
             this.notifyQueue  = notifyQueue;
             this.notifyTask = notifyTask;
         }
 
         public static final class Builder {
-            private final Map<DispatcherQueue.Task, DispatcherQueue> tasks = new HashMap<>();
-            private DispatcherQueue notifyQueue;
-            private DispatcherQueue.Task notifyTask;
+            public final Map<DispatchQueue.Task, Bundle> bundles = new HashMap<>();
+            private final Map<DispatchQueue.Task, DispatchQueue> tasks = new HashMap<>();
+            private DispatchQueue notifyQueue;
+            private DispatchQueue.Task notifyTask;
 
-            public Builder append(DispatcherQueue queue, DispatcherQueue.Task task) {
+            public Builder append(DispatchQueue queue, Bundle bundle, DispatchQueue.Task task) {
                 tasks.put(task, queue);
+                if(bundle != null) {
+                    bundles.put(task, bundle);
+                }
                 return this;
             }
 
-            public Builder remove(DispatcherQueue.Task task) {
+            public Builder remove(DispatchQueue.Task task) {
                 tasks.remove(task);
+
                 return this;
             }
 
-            public Builder notifyTask(DispatcherQueue queue, DispatcherQueue.Task task) {
+            public Builder notifyTask(DispatchQueue queue, DispatchQueue.Task task) {
                 notifyQueue = queue;
                 this.notifyTask = task;
                 return this;
             }
 
             public Transaction build() {
-                return new Transaction(tasks, notifyQueue, notifyTask);
+                return new Transaction(bundles, tasks, notifyQueue, notifyTask);
             }
 
         }
