@@ -7,18 +7,18 @@ package com.cxuy.framework.io.file;
 
 import java.util.concurrent.Semaphore;
 
-import com.cxuy.framework.coroutine.DispatcherQueue;
-import com.cxuy.framework.coroutine.DispatcherQueue.Status;
+import com.cxuy.framework.coroutine.DispatchQueue;
+import com.cxuy.framework.coroutine.DispatchQueue.Status;
 import com.cxuy.framework.util.Logger;
 
-public class FileExecutor implements DispatcherQueue.StatusObserver {
+public class FileExecutor implements DispatchQueue.StatusObserver {
     public interface FileExecutorIsEmptyCallback {
         void taskEmptyCallback(String path, FileExecutor executor);
     }
 
     private static final String TAG = "FileExecutor";
 
-    private final DispatcherQueue worker = new DispatcherQueue();
+    private final DispatchQueue worker = new DispatchQueue();
 
     private final Semaphore readMutex = new Semaphore(1);
     private int readerCount = 0;
@@ -39,8 +39,8 @@ public class FileExecutor implements DispatcherQueue.StatusObserver {
      * 当你需要操作这个文件时，如果你所做的操作可与其他线程或进程共享 可使用此方法增加并发度
      * @param task 操作任务
      */
-    public void share(DispatcherQueue.Task task) {
-        worker.async(() -> {
+    public void share(DispatchQueue.Task task) {
+        worker.async((workerContext) -> {
             try {
                 readMutex.acquire();
                 readerCount++;
@@ -49,9 +49,8 @@ public class FileExecutor implements DispatcherQueue.StatusObserver {
                 }
                 readMutex.release();
 
-                DispatcherQueue.io.async(() -> {
-                    task.run();
-
+                DispatchQueue.io.async((context) -> {
+                    task.run(context);
                     // 开始释放信号量
                     try {
                         readMutex.acquire();
@@ -75,11 +74,11 @@ public class FileExecutor implements DispatcherQueue.StatusObserver {
      * 当你需要操作这个文件时，如果你所做的操作不可与其他线程或进程共享 可使用此方法独享文件操作
      * @param task 操作任务
      */
-    public void mutex(DispatcherQueue.Task task) {
-        worker.async(() -> {
+    public void mutex(DispatchQueue.Task task) {
+        worker.async((context) -> {
             try {
                 writeMutex.acquire();
-                task.run();
+                task.run(context);
                 writeMutex.release();
             } catch(InterruptedException e) {
                 Logger.e(TAG, "Acquiring Semaphore failure. ");
@@ -88,12 +87,12 @@ public class FileExecutor implements DispatcherQueue.StatusObserver {
     }
 
     public boolean taskEmpty() {
-        return worker.getStatus().rawValue >= DispatcherQueue.Status.IDLE.rawValue;
+        return worker.getStatus().rawValue >= DispatchQueue.Status.IDLE.rawValue;
     }
 
     @Override
-    public void onChanged(DispatcherQueue queue, Status status) {
-        if(callback != null && status.rawValue >= DispatcherQueue.Status.DORMANT.rawValue) {
+    public void onChanged(DispatchQueue queue, Status status) {
+        if(callback != null && status.rawValue >= DispatchQueue.Status.DORMANT.rawValue) {
             callback.taskEmptyCallback(path, this);
         }
     }
