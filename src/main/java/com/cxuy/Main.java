@@ -26,46 +26,6 @@ public class Main {
         run(context);
         context.destroy();
     }
-
-    public static void run(Context context) {
-//        I protocol = new Protocol.Builder().baseUrl("http://localhost:5867").build().create(I.class);
-//        SimpleHttpServer server = new SimpleHttpServer(context, new LifecycleObserver() {
-//            @Override
-//            public void lifecycleOnChanged(LifecycleOwner owner, LifecycleState state) {
-//                if(state == LifecycleState.DID_START) {
-//                    Client.getInstance().async(protocol.login("kpb", "123"), new Client.ResponseCallback() {
-//                        @Override
-//                        public void response(Client client, Request request, Response response) {
-//                            Logger.d(TAG, response.body.string());
-//                        }
-//                    });
-//                }
-//            }
-//        });
-//        server.start();
-
-        DispatchGroup group = new DispatchGroup();
-        Bundle bundle = new Bundle();
-        bundle.putExtra("INTEGER", 3);
-        group.async(DispatchQueue.standard, bundle, (context1) -> {
-            Logger.d(TAG, "s INTEGER=" + context1.getBundle().getInt("INTEGER", 0));
-        });
-        group.async(DispatchQueue.io, bundle, (context1) -> {
-            Logger.d(TAG, "io INTEGER=" + context1.getBundle().getInt("INTEGER", 0));
-        });
-        group.async(DispatchQueue.io, bundle, (context1) -> {
-            Logger.d(TAG, "io INTEGER=" + context1.getBundle().getInt("INTEGER", 0));
-        });
-        group.notify(DispatchQueue.standard, bundle, (context1) -> {
-            Logger.d(TAG, "notify INTEGER=" + context1.getBundle().getInt("INTEGER", 0));
-        });
-        Logger.d(TAG, "finish");
-    }
-
-    public interface I {
-        @GET(path = "/hello")
-        Request hello(@Param("name") String name);
-        @GET(path = "/login")
-        Request login(@Param("username") String name, @Param("pwd")String password);
-    }
+  
+    public static void run(Context context) {  }
 }
