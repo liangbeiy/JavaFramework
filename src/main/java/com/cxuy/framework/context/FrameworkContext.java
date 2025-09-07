@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class FrameworkContext extends Context implements LifecycleOwner {
-
     private final BuildConfig buildConfig;
     private final Object stateLock = new Object();
     private LifecycleState state;
