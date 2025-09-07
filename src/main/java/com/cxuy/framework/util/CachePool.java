@@ -5,7 +5,7 @@
 
 package com.cxuy.framework.util;
 
-import com.cxuy.framework.coroutine.DispatcherQueue;
+import com.cxuy.framework.coroutine.DispatchQueue;
 
 import java.util.*;
 
@@ -25,7 +25,7 @@ public final class CachePool<K, M> {
     private final Object nodePoolLock = new Object(); 
     private final Queue<Node<K, M>> nodePool = new LinkedList<>(); 
 
-    private final DispatcherQueue worker = new DispatcherQueue(DISPATCHER_NAME);
+    private final DispatchQueue worker = new DispatchQueue(DISPATCHER_NAME);
 
     private final Map<K, Node<K, M>> searchMap = new HashMap<>(); 
     private final Node<K, M> head = new Node<>(); 
@@ -43,7 +43,7 @@ public final class CachePool<K, M> {
             return; 
         }
         if(searchMap.containsKey(key)) {
-            worker.async(() -> {
+            worker.async((context) -> {
                 Node<K, M> node = searchMap.remove(key); 
                 node.model = model; 
                 remove(node);
@@ -54,7 +54,7 @@ public final class CachePool<K, M> {
         Node<K, M> node = obtain(); 
         node.key = key; 
         node.model = model; 
-        worker.async(() -> {
+        worker.async((context) -> {
             searchMap.put(key, node); 
             insert(head, node);
         });
@@ -68,7 +68,7 @@ public final class CachePool<K, M> {
         if(key == null) {
             return; 
         }
-        worker.async(() -> {
+        worker.async((context) -> {
             Node<K, M> node = searchMap.remove(key); 
             if(node == null) {
                 return; 
@@ -90,7 +90,7 @@ public final class CachePool<K, M> {
         if(key == null) {
             return; 
         }
-        worker.async(() -> {
+        worker.async((context) -> {
             Node<K, M> node = searchMap.get(key); 
             if(node == null) {
                 callback.callback(this, key, null);

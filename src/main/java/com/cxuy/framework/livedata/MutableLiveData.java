@@ -5,7 +5,7 @@
 
 package com.cxuy.framework.livedata;
 
-import com.cxuy.framework.coroutine.DispatcherQueue;
+import com.cxuy.framework.coroutine.DispatchQueue;
 
 public class MutableLiveData<T> extends LiveData<T> {
 
@@ -19,7 +19,7 @@ public class MutableLiveData<T> extends LiveData<T> {
     }
 
     public void post(T data) {
-        DispatcherQueue.standard.async(() -> {
+        DispatchQueue.standard.async((context) -> {
             this.data = data;
             version++;
             dispatch(data, version);

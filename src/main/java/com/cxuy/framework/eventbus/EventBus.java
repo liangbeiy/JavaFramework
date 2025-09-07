@@ -6,7 +6,7 @@
 package com.cxuy.framework.eventbus;
 
 import com.cxuy.framework.eventbus.annotate.Subscribe;
-import com.cxuy.framework.coroutine.DispatcherQueue;
+import com.cxuy.framework.coroutine.DispatchQueue;
 import com.cxuy.framework.util.Logger;
 
 import java.lang.reflect.InvocationTargetException;
@@ -26,13 +26,13 @@ public class EventBus {
     private final Map<Class<?>, Set<SubscriberWrapper>> subscribers = new HashMap<>(); 
     private final Map<Object, SubscriberWrapper> registers = new HashMap<>(); 
 
-    private final DispatcherQueue worker = new DispatcherQueue(WORKER_NAME);
+    private final DispatchQueue worker = new DispatchQueue(WORKER_NAME);
 
     public void register(Object subscriber) {
         if(subscriber == null) {
             return; 
         }
-        worker.async(() -> {
+        worker.async((context) -> {
             if(registers.containsKey(subscriber)) {
                 return; 
             }
@@ -56,7 +56,7 @@ public class EventBus {
         if(event == null) {
             return; 
         }
-        worker.async(() -> {
+        worker.async((context) -> {
             Class<?> eventType = event.getClass(); 
             Set<SubscriberWrapper> wrappers = subscribers.get(eventType); 
             for(SubscriberWrapper wrapper : wrappers) {
@@ -69,7 +69,7 @@ public class EventBus {
         if(subscriber == null) {
             return; 
         }
-        worker.async(() -> {
+        worker.async((context) -> {
             SubscriberWrapper wrapper = registers.get(subscriber); 
             if(wrapper == null) {
                 return; 

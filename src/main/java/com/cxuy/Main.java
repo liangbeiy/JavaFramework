@@ -8,25 +8,15 @@ package com.cxuy;
 import com.cxuy.framework.context.BuildConfig;
 import com.cxuy.framework.context.Context;
 import com.cxuy.framework.context.FrameworkContext;
+import com.cxuy.framework.coroutine.Bundle;
+import com.cxuy.framework.coroutine.DispatchContext;
 import com.cxuy.framework.coroutine.DispatchGroup;
-import com.cxuy.framework.coroutine.DispatcherQueue;
-import com.cxuy.framework.lifecycle.LifecycleObserver;
-import com.cxuy.framework.lifecycle.LifecycleOwner;
-import com.cxuy.framework.lifecycle.LifecycleState;
-import com.cxuy.framework.util.JsonUtil;
+import com.cxuy.framework.coroutine.DispatchQueue;
 import com.cxuy.framework.util.Logger;
 import com.cxuy.framework.io.file.FileManager;
-import com.cxuy.framework.io.kv.SimpleKV;
-import com.cxuy.http.client.Client;
 import com.cxuy.http.client.Request;
-import com.cxuy.http.client.Response;
-import com.cxuy.http.protocol.Protocol;
 import com.cxuy.http.protocol.annotation.Param;
 import com.cxuy.http.protocol.annotation.method.GET;
-import com.cxuy.server.SimpleHttpServer;
-
-import java.net.http.HttpClient;
-import java.util.Map;
 
 public class Main {
     private static final String TAG = "MAIN";
@@ -55,15 +45,21 @@ public class Main {
 //        server.start();
 
         DispatchGroup group = new DispatchGroup();
-        group.async(DispatcherQueue.io, () -> {
-            Logger.d(TAG, "hello1");
+        Bundle bundle = new Bundle();
+        bundle.putExtra("INTEGER", 3);
+        group.async(DispatchQueue.standard, bundle, (context1) -> {
+            Logger.d(TAG, "s INTEGER=" + context1.getBundle().getInt("INTEGER", 0));
         });
-        group.async(DispatcherQueue.io, () -> {
-            Logger.d(TAG, "hello2");
+        group.async(DispatchQueue.io, bundle, (context1) -> {
+            Logger.d(TAG, "io INTEGER=" + context1.getBundle().getInt("INTEGER", 0));
         });
-        group.notify(DispatcherQueue.standard, () -> {
-            Logger.d(TAG, "notify");
+        group.async(DispatchQueue.io, bundle, (context1) -> {
+            Logger.d(TAG, "io INTEGER=" + context1.getBundle().getInt("INTEGER", 0));
         });
+        group.notify(DispatchQueue.standard, bundle, (context1) -> {
+            Logger.d(TAG, "notify INTEGER=" + context1.getBundle().getInt("INTEGER", 0));
+        });
+        Logger.d(TAG, "finish");
     }
 
     public interface I {
