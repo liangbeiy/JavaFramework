@@ -8,6 +8,7 @@ package com.cxuy.framework.context;
 import com.cxuy.framework.lifecycle.LifecycleObserver;
 import com.cxuy.framework.lifecycle.LifecycleOwner;
 import com.cxuy.framework.lifecycle.LifecycleState;
+import com.cxuy.framework.provider.ProviderManager;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -88,6 +89,11 @@ public class FrameworkContext extends Context implements LifecycleOwner {
             return;
         }
         observers.remove(observer);
+    }
+
+    @Override
+    protected ProviderManager createProviderManager() {
+        return new ProviderManager();
     }
 
     @Override

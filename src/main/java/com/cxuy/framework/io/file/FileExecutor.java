@@ -36,7 +36,7 @@ public class FileExecutor implements DispatchQueue.StatusObserver {
     /**
      * 文件操作共享
      * <p>
-     * 当你需要操作这个文件时，如果你所做的操作可与其他线程或进程共享 可使用此方法增加并发度
+     * 当你需要操作这个文件时，如果你所做的操作可与其他线程共享 可使用此方法增加并发度
      * @param task 操作任务
      */
     public void share(DispatchQueue.Task task) {
@@ -71,7 +71,7 @@ public class FileExecutor implements DispatchQueue.StatusObserver {
     /**
      * 文件操作互斥
      * <p>
-     * 当你需要操作这个文件时，如果你所做的操作不可与其他线程或进程共享 可使用此方法独享文件操作
+     * 当你需要操作这个文件时，如果你所做的操作不可与其他线程共享 可使用此方法独享文件操作
      * @param task 操作任务
      */
     public void mutex(DispatchQueue.Task task) {

@@ -8,10 +8,10 @@ package com.cxuy.framework.io.kv;
 import com.cxuy.framework.annotation.NonNull;
 import com.cxuy.framework.annotation.Nullable;
 
-import java.util.Map;
-import java.util.Set;
-
 public interface MapStorage {
+
+    String PATH_SUB = "map_storage";
+    String NAME_DEFAULT = "default_map";
 
     void put(@NonNull String key, String value);
 

@@ -6,31 +6,39 @@
 package com.cxuy.framework.coroutine;
 
 import com.cxuy.framework.annotation.Nullable;
+import com.cxuy.framework.coroutine.exception.GroupHasDoneException;
 
 import java.util.*;
 import java.util.concurrent.Semaphore;
 
 public class DispatchGroup {
 
+    public DispatchGroup() {
+        this(true);
+    }
+
+    public DispatchGroup(boolean autoLeave) {
+        this.autoLeave = autoLeave;
+    }
+
+    private boolean isDone = false;
+    private final boolean autoLeave;
     private final Object builderLock = new Object();
+    private final Semaphore semaphore = new Semaphore(0);
+
     @Nullable
     private Transaction.Builder transactionBuilder;
 
     public void async(DispatchQueue queue, DispatchQueue.Task task) {
-        if(queue == null || task == null) {
-            return;
-        }
-        synchronized(builderLock) {
-            if(transactionBuilder == null) {
-                this.transactionBuilder = new Transaction.Builder();
-            }
-            transactionBuilder.append(queue, null, task);
-        }
+        async(queue, null, task);
     }
 
     public void async(DispatchQueue queue, Bundle bundle, DispatchQueue.Task task) {
         if(queue == null || task == null) {
             return;
+        }
+        if(isDone) {
+            throw new GroupHasDoneException();
         }
         synchronized(builderLock) {
             if(transactionBuilder == null) {
@@ -48,6 +56,9 @@ public class DispatchGroup {
         if(queue == null || task == null) {
             return;
         }
+        if(isDone) {
+            throw new GroupHasDoneException();
+        }
         Transaction newTransaction;
         synchronized(builderLock) {
             if(transactionBuilder == null) {
@@ -58,32 +69,40 @@ public class DispatchGroup {
                     .build();
             transactionBuilder = null;
         }
-        DispatchQueue.standard.async((context) -> {
-            Map<DispatchQueue.Task, DispatchQueue> tasks = newTransaction.tasks;
-            Map<DispatchQueue.Task, Bundle> bundles = newTransaction.bundles;
-            final Semaphore semaphore = new Semaphore(0);
-            for(Map.Entry<DispatchQueue.Task, DispatchQueue> entry : tasks.entrySet()) {
-                entry.getValue().async(bundles.get(entry.getKey()), (executeContext) -> {
-                    entry.getKey().run(executeContext);
+        Map<DispatchQueue.Task, DispatchQueue> tasks = newTransaction.tasks;
+        Map<DispatchQueue.Task, Bundle> bundles = newTransaction.bundles;
+        for(Map.Entry<DispatchQueue.Task, DispatchQueue> entry : tasks.entrySet()) {
+            entry.getValue().async(bundles.get(entry.getKey()), (context) -> {
+                entry.getKey().run(context);
+                if(autoLeave) {
                     semaphore.release();
-                });
-            }
-            DispatchQueue.io.async(bundle, (notifyContext) -> {
-                try {
-                    semaphore.acquire(tasks.size());
-                    newTransaction.notifyQueue.async(bundle, newTransaction.notifyTask);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
                 }
             });
+        }
+        DispatchQueue.io.async(bundle, (context) -> {
+            try {
+                semaphore.acquire(tasks.size());
+                newTransaction.notifyQueue.async(bundle, newTransaction.notifyTask);
+                isDone = true;
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         });
     }
 
+    public void leave() {
+        if(isDone) {
+            throw new GroupHasDoneException();
+        }
+        semaphore.release();
+    }
+
     private static final class Transaction {
+        public final Semaphore semaphore = new Semaphore(0);
         public final Map<DispatchQueue.Task, Bundle> bundles;
         public final Map<DispatchQueue.Task, DispatchQueue> tasks;
-        public DispatchQueue notifyQueue;
-        public DispatchQueue.Task notifyTask;
+        public final DispatchQueue notifyQueue;
+        public final DispatchQueue.Task notifyTask;
         public Transaction(Map<DispatchQueue.Task, Bundle> bundles, Map<DispatchQueue.Task, DispatchQueue> tasks, DispatchQueue notifyQueue, DispatchQueue.Task notifyTask) {
             this.bundles = bundles;
             this.tasks = tasks;

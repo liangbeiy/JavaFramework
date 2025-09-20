@@ -35,6 +35,7 @@ public class SimpleKV implements MapStorage, LifecycleObserver {
 
     private final Object initLock = new Object();
     private final AtomicBoolean isInit = new AtomicBoolean(false);
+
     public SimpleKV(Context context) {
         this(context, DEFAULT_NAME);
     }
@@ -48,33 +49,7 @@ public class SimpleKV implements MapStorage, LifecycleObserver {
         if(!FileManager.getInstance().isExist(path)) {
             FileManager.getInstance().createFile(path);
         }
-        FileManager.getInstance().read(storagePath, (jsonPath, result) -> {
-            if(TextUtil.isEmpty(result)) {
-                synchronized(initLock) {
-                    isInit.set(true);
-                    initLock.notifyAll();
-                }
-                return;
-            }
-            Map<String, String> fileMap = JsonUtil.fromJson(result, Map.class);
-            if(fileMap == null) {
-                synchronized(initLock) {
-                    isInit.set(true);
-                    initLock.notifyAll();
-                }
-                return;
-            }
-            for(Map.Entry<String, String> entry : fileMap.entrySet()) {
-                if(kvMap.containsKey(entry.getKey()) || pendingRemoveKey.contains(entry.getKey())) {
-                    continue;
-                }
-                kvMap.put(entry.getKey(), entry.getValue());
-            }
-            synchronized(initLock) {
-                isInit.set(true);
-                initLock.notifyAll();
-            }
-        });
+        readFromFile();
     }
 
     public SimpleKV putInt(@Nullable String key, int value) {
@@ -256,14 +231,23 @@ public class SimpleKV implements MapStorage, LifecycleObserver {
     @Override
     public String get(String key, String defaultValue) {
         if(TextUtil.isEmpty(key)) {
-            return null;
+            return defaultValue;
         }
         boolean success = waitForInit();
         if(!success) {
-            return null;
+            return defaultValue;
         }
         String value = kvMap.get(key);
-        return value != null ? value : defaultValue;
+        if(value != null) {
+            return value;
+        }
+        readFromFile();
+        boolean getDiskFromSuccessful = waitForInit();
+        if(!getDiskFromSuccessful) {
+            return defaultValue;
+        }
+        String diskValue = kvMap.get(key);
+        return diskValue == null ? defaultValue : diskValue;
     }
 
     @Override
@@ -290,9 +274,50 @@ public class SimpleKV implements MapStorage, LifecycleObserver {
             if(writeCount == 0) {
                 return;
             }
-            FileManager.getInstance().write(storagePath, JsonUtil.toJson(kvMap), null);
+            String json = JsonUtil.toJson(kvMap);
+            writeToFile(json);
             writeCount = 0;
         }
+    }
+
+    protected void readFromFile() {
+        FileManager.getInstance().read(storagePath, (_, result) -> {
+            if(TextUtil.isEmpty(result)) {
+                hasInit();
+                return;
+            }
+            Map<String, String> fileMap = JsonUtil.fromJson(result, Map.class);
+            if(fileMap == null) {
+                hasInit();
+                return;
+            }
+            for(Map.Entry<String, String> entry : fileMap.entrySet()) {
+                if(kvMap.containsKey(entry.getKey()) || pendingRemoveKey.contains(entry.getKey())) {
+                    continue;
+                }
+                kvMap.put(entry.getKey(), entry.getValue());
+            }
+        });
+    }
+
+    protected void resetInit() {
+        synchronized(initLock) {
+            isInit.set(false);
+        }
+    }
+
+    protected void hasInit() {
+        synchronized(initLock) {
+            isInit.set(true);
+            initLock.notifyAll();
+        }
+    }
+
+    protected void writeToFile(@Nullable String content) {
+        if(TextUtil.isEmpty(content)) {
+            return;
+        }
+        FileManager.getInstance().write(storagePath, content, null);
     }
 
     private void recordApply() {
