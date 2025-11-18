@@ -13,7 +13,7 @@ import com.cxuy.framework.io.file.FileManager;
 public class Main {
     private static final String TAG = "MAIN";
     public static void main(String[] args) {
-        FrameworkContext context = new FrameworkContext(FileManager.getInstance().getAbsolutePath(), BuildConfig.DEBUG);
+        FrameworkContext context = new FrameworkContext(FileManager.getInstance().getAbsolutePath());
         context.create();
         run(context);
         context.destroy();
