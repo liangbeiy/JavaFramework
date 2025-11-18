@@ -22,19 +22,19 @@ public interface FileProvider extends Provider {
 
     boolean isExist(String path);
 
-    boolean create(String path);
+    void create(String path);
 
     void readString(String path, ReadFileCallback<String> callback);
 
     void readBytes(String path, ReadFileCallback<byte[]> callback);
 
-    void writeString(String path, String content, WriteFileCallback callback);
+    void write(String path, String content, WriteFileCallback callback);
 
-    void writeBytes(String path, byte[] bytes, WriteFileCallback callback);
+    void write(String path, byte[] bytes, WriteFileCallback callback);
 
-    void appendString(String path, String content, WriteFileCallback callback);
+    void append(String path, String content, WriteFileCallback callback);
 
-    void appendBytes(String path, byte[] bytes, WriteFileCallback callback);
+    void append(String path, byte[] bytes, WriteFileCallback callback);
 
     void delete(String path);
 

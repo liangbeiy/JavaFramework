@@ -6,9 +6,10 @@
 package com.cxuy.framework.context;
 
 import com.cxuy.framework.annotation.NonNull;
+import com.cxuy.framework.lifecycle.LifecycleOwner;
 import com.cxuy.framework.provider.ProviderManager;
 
-public abstract class Context {
+public abstract class Context implements LifecycleOwner {
     @NonNull
     private final String rootDir;
 

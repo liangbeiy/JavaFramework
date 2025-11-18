@@ -3,13 +3,13 @@
  * Licensed under the MIT License. See LICENSE file in the project root for full license information.
  */
 
-package com.cxuy.framework.io.file;
-
-import java.util.concurrent.Semaphore;
+package com.cxuy.framework.io.file.execute;
 
 import com.cxuy.framework.coroutine.DispatchQueue;
 import com.cxuy.framework.coroutine.DispatchQueue.Status;
 import com.cxuy.framework.util.Logger;
+
+import java.util.concurrent.Semaphore;
 
 public class FileExecutor implements DispatchQueue.StatusObserver {
     public interface FileExecutorIsEmptyCallback {

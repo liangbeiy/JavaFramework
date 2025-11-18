@@ -6,6 +6,13 @@
 package com.cxuy.framework.constant;
 
 public final class Constant {
+    // params
+    public static final String FRAMEWORK_NAMESPACE = "com.cxuy.framework";
+    /**编译时版本*/
+    public static final String PARAM_KEY_BUILD_VERSION = "build_version";
+    /**编译时版本*/
+    public static final String PARAM_KEY_BUILD_TYPE = "build_type";
+
     /**标准空字符串占位符*/
     public static final String DEFAULT_PLACEHOLDER_STR = "--";
     /**空字符串*/

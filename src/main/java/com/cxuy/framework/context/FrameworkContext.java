@@ -15,26 +15,22 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class FrameworkContext extends Context implements LifecycleOwner {
-    private final BuildConfig buildConfig;
     private final Object stateLock = new Object();
     private LifecycleState state;
 
     private final Set<LifecycleObserver> observers = Collections.synchronizedSet(new HashSet<>());
 
-    public FrameworkContext(String root, BuildConfig buildConfig) {
+    public FrameworkContext(String root) {
         super(root);
-        this.buildConfig = buildConfig;
         setState(LifecycleState.INITED);
     }
 
     public void onCreate() {  }
+
     public void onDestroy() {
         setState(LifecycleState.WILL_DESTROY);
     }
 
-    public BuildConfig getBuildConfig() {
-        return buildConfig;
-    }
 
     public void create() {
         handleCreate();

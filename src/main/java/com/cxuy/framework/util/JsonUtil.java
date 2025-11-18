@@ -44,8 +44,11 @@ public final class JsonUtil {
             return defaultValue;
         }
         JsonObject jsonObject = INSTANCE.fromJson(jsonStr, JsonObject.class);
-        String valueJson = jsonObject.get(key).getAsString();
-        T value = fromJson(valueJson, clazz);
+        JsonElement valueJson = jsonObject.get(key);
+        if(valueJson == null) {
+            return defaultValue;
+        }
+        T value = fromJson(valueJson.toString(), clazz);
         return value == null ? defaultValue : value;
     }
 

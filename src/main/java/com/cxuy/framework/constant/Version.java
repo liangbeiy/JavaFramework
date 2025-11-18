@@ -5,8 +5,8 @@
 
 package com.cxuy.framework.constant;
 
-public enum Global {
-    DEFAULT("1.0.0", 10000000);
+public enum Version {
+    TARGET("1.0.0", 10000000);
 
     /**
      * <h3>版本号</h3>
@@ -38,7 +38,7 @@ public enum Global {
      */
     public final String versionName;
 
-    Global(String versionName, int versionCode) {
+    Version(String versionName, int versionCode) {
         this.versionName = versionName;
         this.versionCode = versionCode;
     }
