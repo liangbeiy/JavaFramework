@@ -7,4 +7,8 @@ package com.cxuy.framework.eventbus.cross.constant;
 
 public class Constants {
     public static final String SERVER_SOCKET_NAMESPACE = "com_cxuy_framework_INTER_PROCESS_SERVER_EVENT_BUS";
+
+    public static final int HEARTBEAT_INTERVAL = 5 * 1000;
+    public static final int HEARTBEAT_TIMEOUT = 10 * 1000;
+
 }

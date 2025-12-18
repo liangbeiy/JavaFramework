@@ -38,6 +38,10 @@ public class Message<T> {
         return new Message<>(Operation.POST, data.getClass(), data);
     }
 
+    public static Message<String> heartbeatMessage() {
+        return new Message<>(Operation.UNREGISTER, HeartbeatModel.class, "heartbeat message");
+    }
+
     public static String encode(Message<?> message) {
         return JsonUtil.toJson(message) + "\n";
     }

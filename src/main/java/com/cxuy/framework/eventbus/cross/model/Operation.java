@@ -6,7 +6,10 @@
 package com.cxuy.framework.eventbus.cross.model;
 
 public enum Operation {
-    REGISTER("register"), UNREGISTER("unregister"), POST("post");
+    REGISTER("register"),
+    UNREGISTER("unregister"),
+    POST("post"),
+    HEARTBEAT("heartbeat");
     public final String rawValue;
     Operation(String rawValue) {
         this.rawValue = rawValue;

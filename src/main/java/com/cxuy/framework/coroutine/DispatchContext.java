@@ -6,9 +6,10 @@
 package com.cxuy.framework.coroutine;
 
 import com.cxuy.framework.annotation.Nullable;
+import com.cxuy.framework.coroutine.queue.DispatcherQueue;
 
 public class DispatchContext {
-    private final DispatchQueue dispatchQueue;
+    private final DispatcherQueue dispatchQueue;
     private final long taskId;
 
     private final Object cancelLock = new Object();
@@ -17,12 +18,12 @@ public class DispatchContext {
     private final Object bundleLock = new Object();
     private Bundle bundle;
 
-    public DispatchContext(long taskId, DispatchQueue queue) {
+    public DispatchContext(long taskId, DispatcherQueue queue) {
         this.taskId = taskId;
         this.dispatchQueue = queue;
     }
 
-    public DispatchQueue getDispatcherQueue() {
+    public DispatcherQueue getDispatcherQueue() {
         return dispatchQueue;
     }
 

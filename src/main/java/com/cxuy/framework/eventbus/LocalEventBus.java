@@ -5,7 +5,7 @@
 
 package com.cxuy.framework.eventbus;
 
-import com.cxuy.framework.coroutine.DispatchQueue;
+import com.cxuy.framework.coroutine.queue.DispatcherQueue;
 import com.cxuy.framework.eventbus.annotate.Subscribe;
 import com.cxuy.framework.util.Logger;
 
@@ -24,7 +24,7 @@ public class LocalEventBus implements EventBus {
     private final Map<Class<?>, Set<SubscriberWrapper>> subscribers = new HashMap<>();
     private final Map<Object, SubscriberWrapper> registers = new HashMap<>();
 
-    private final DispatchQueue worker = new DispatchQueue(WORKER_NAME);
+    private final DispatcherQueue worker = new DispatcherQueue(WORKER_NAME);
 
     private static final LocalEventBus INSTANCE = new LocalEventBus();
 

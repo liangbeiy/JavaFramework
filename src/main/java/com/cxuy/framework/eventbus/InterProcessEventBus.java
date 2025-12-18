@@ -5,9 +5,11 @@
 
 package com.cxuy.framework.eventbus;
 
-import com.cxuy.framework.coroutine.DispatchQueue;
+import com.cxuy.framework.coroutine.DispatchContext;
+import com.cxuy.framework.coroutine.queue.DispatcherQueue;
 import com.cxuy.framework.eventbus.annotate.Subscribe;
 import com.cxuy.framework.eventbus.cross.InterProcessServer;
+import com.cxuy.framework.eventbus.cross.constant.Constants;
 import com.cxuy.framework.eventbus.cross.constant.Params;
 import com.cxuy.framework.eventbus.cross.model.Message;
 import com.cxuy.framework.util.JsonUtil;
@@ -31,15 +33,30 @@ public final class InterProcessEventBus implements EventBus {
 
     private final Object pendingQueueLock = new Object();
     private final Queue<PendingMessage> pendingMessages = new LinkedList<>();
-    private final DispatchQueue interWorker = new DispatchQueue(InterProcessServer.class.getName() + "#inter");
-    private final DispatchQueue worker = new DispatchQueue(InterProcessServer.class.getName() + "#worker");
+    private final DispatcherQueue interWorker = new DispatcherQueue(InterProcessServer.class.getName() + "#inter");
+    private final DispatcherQueue worker = new DispatcherQueue(InterProcessServer.class.getName() + "#worker");
 
     private final Map<Class<?>, Set<SubscriberWrapper>> subscribers = new HashMap<>();
     private final Map<Object, SubscriberWrapper> registers = new HashMap<>();
 
     private Socket socket;
     private OutputStream outputStream;
-    BufferedReader reader;
+    private BufferedReader reader;
+
+    private DispatchContext cancelContext = null;
+    private final DispatcherQueue.Task heartbeatTask = (heartbeatContext) -> {
+        if(cancelContext != null) {
+            cancelContext.cancel();
+        }
+        Message<String> message = Message.heartbeatMessage();
+        sendMessage(null, message);
+        cancelContext = worker.async(Constants.HEARTBEAT_TIMEOUT, (context) -> {
+            Logger.e(TAG, "Heartbeat timeout, reconnecting...");
+            closeSocket();
+            connect();
+        });
+        worker.async(Constants.HEARTBEAT_INTERVAL, get().heartbeatTask);
+    };
 
     public static InterProcessEventBus get() {
         return HOLDER.INSTANCE;
@@ -47,6 +64,7 @@ public final class InterProcessEventBus implements EventBus {
 
     private InterProcessEventBus() {
         connect();
+        worker.async(heartbeatTask);
     }
 
 
@@ -73,12 +91,17 @@ public final class InterProcessEventBus implements EventBus {
     @Override
     public void unregister(Object subscriber) {
         Message<?> message = Message.unregisterAllMessage();
+        worker.async((context) -> {
+            unregister(subscriber, message);
+        });
     }
 
     @Override
     public void post(Object event) {
         Message<?> message = Message.postMessage(event);
-        post(message);
+        worker.async((context) -> {
+            post(message);
+        });
     }
 
     private void register(Object subscriber, Message<?> message) {
@@ -164,7 +187,7 @@ public final class InterProcessEventBus implements EventBus {
 
     public void handlePendingMessage() {
         // 处理全部挂起事件
-        DispatchQueue.io.async(context -> {
+        DispatcherQueue.io.async(context -> {
             synchronized(pendingQueueLock) {
                 Queue<PendingMessage> copyList = new LinkedList<>(pendingMessages);
                 pendingMessages.clear();

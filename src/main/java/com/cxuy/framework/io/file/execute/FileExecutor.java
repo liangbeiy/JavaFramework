@@ -5,20 +5,21 @@
 
 package com.cxuy.framework.io.file.execute;
 
-import com.cxuy.framework.coroutine.DispatchQueue;
+import com.cxuy.framework.coroutine.queue.DispatcherQueue;
 import com.cxuy.framework.coroutine.DispatchQueue.Status;
+import com.cxuy.framework.coroutine.task.Task;
 import com.cxuy.framework.util.Logger;
 
 import java.util.concurrent.Semaphore;
 
-public class FileExecutor implements DispatchQueue.StatusObserver {
+public class FileExecutor implements DispatcherQueue.StatusObserver {
     public interface FileExecutorIsEmptyCallback {
         void taskEmptyCallback(String path, FileExecutor executor);
     }
 
     private static final String TAG = "FileExecutor";
 
-    private final DispatchQueue worker = new DispatchQueue();
+    private final DispatcherQueue worker = new DispatcherQueue();
 
     private final Semaphore readMutex = new Semaphore(1);
     private int readerCount = 0;
@@ -30,7 +31,7 @@ public class FileExecutor implements DispatchQueue.StatusObserver {
     public FileExecutor(String path, FileExecutorIsEmptyCallback callback) {
         this.path = path;
         this.callback = callback;
-        worker.addStatusObserver(this);
+        worker.addObserver(this);
     }
 
     /**
@@ -39,7 +40,7 @@ public class FileExecutor implements DispatchQueue.StatusObserver {
      * 当你需要操作这个文件时，如果你所做的操作可与其他线程共享 可使用此方法增加并发度
      * @param task 操作任务
      */
-    public void share(DispatchQueue.Task task) {
+    public void share(Task task) {
         worker.async((workerContext) -> {
             try {
                 readMutex.acquire();
@@ -49,7 +50,7 @@ public class FileExecutor implements DispatchQueue.StatusObserver {
                 }
                 readMutex.release();
 
-                DispatchQueue.io.async((context) -> {
+                DispatcherQueue.io.async((context) -> {
                     task.run(context);
                     // 开始释放信号量
                     try {
@@ -74,7 +75,7 @@ public class FileExecutor implements DispatchQueue.StatusObserver {
      * 当你需要操作这个文件时，如果你所做的操作不可与其他线程共享 可使用此方法独享文件操作
      * @param task 操作任务
      */
-    public void mutex(DispatchQueue.Task task) {
+    public void mutex(Task task) {
         worker.async((context) -> {
             try {
                 writeMutex.acquire();
@@ -87,12 +88,12 @@ public class FileExecutor implements DispatchQueue.StatusObserver {
     }
 
     public boolean taskEmpty() {
-        return worker.getStatus().rawValue >= DispatchQueue.Status.IDLE.rawValue;
+        return worker.getStatus().rawValue >= DispatcherQueue.Status.IDLE.rawValue;
     }
 
     @Override
-    public void onChanged(DispatchQueue queue, Status status) {
-        if(callback != null && status.rawValue >= DispatchQueue.Status.DORMANT.rawValue) {
+    public void onChanged(DispatcherQueue queue, Status status) {
+        if(callback != null && status.rawValue >= DispatcherQueue.Status.DORMANT.rawValue) {
             callback.taskEmptyCallback(path, this);
         }
     }

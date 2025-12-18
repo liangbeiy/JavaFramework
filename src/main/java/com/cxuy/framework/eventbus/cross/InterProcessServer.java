@@ -5,7 +5,7 @@
 
 package com.cxuy.framework.eventbus.cross;
 
-import com.cxuy.framework.coroutine.DispatchQueue;
+import com.cxuy.framework.coroutine.queue.DispatcherQueue;
 import com.cxuy.framework.eventbus.cross.model.Operation;
 import com.cxuy.framework.eventbus.cross.model.UnregisterAllModal;
 import com.cxuy.framework.lifecycle.DefaultLifecycleOwner;
@@ -23,7 +23,7 @@ public class InterProcessServer extends DefaultLifecycleOwner {
     // 订阅关系：事件类型 -> 客户端连接集合
     private final Map<String, Set<InterProcessClientHandler>> subscribers = Collections.synchronizedMap(new HashMap<>());
 
-    private final DispatchQueue acceptWorker = new DispatchQueue("com.cxuy.framework.eventbus.InterProcessServer#accpter");
+    private final DispatcherQueue acceptWorker = new DispatcherQueue("com.cxuy.framework.eventbus.InterProcessServer#accpter");
     public InterProcessServer() {
         setState(LifecycleState.INITED);
     }

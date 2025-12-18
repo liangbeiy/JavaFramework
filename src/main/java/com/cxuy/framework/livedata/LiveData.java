@@ -5,8 +5,8 @@
 
 package com.cxuy.framework.livedata;
 
+import com.cxuy.framework.coroutine.queue.DispatcherQueue;
 import com.cxuy.framework.lifecycle.LifecycleOwner;
-import com.cxuy.framework.coroutine.DispatchQueue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +32,7 @@ public class LiveData<T> {
         if(owner == null) {
             return;
         }
-        DispatchQueue.standard.async((context) -> {
+        DispatcherQueue.standard.async((context) -> {
             LifecycleOwnerWrapper wrapper = null;
             for(LifecycleOwnerWrapper w : observers.keySet()) {
                 if(owner == w.owner) {
