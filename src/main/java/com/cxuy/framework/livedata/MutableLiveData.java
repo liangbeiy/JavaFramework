@@ -19,7 +19,7 @@ public class MutableLiveData<T> extends LiveData<T> {
     }
 
     public void post(T data) {
-        DispatcherQueue.standard.async((context) -> {
+        DispatcherQueue.standard.async(() -> {
             this.data = data;
             version++;
             dispatch(data, version);

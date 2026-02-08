@@ -5,11 +5,7 @@
 
 package com.cxuy.framework.coroutine.queue;
 
-import java.util.concurrent.ThreadPoolExecutor;
-
 public class CoroutineDispatcherQueue extends DispatcherQueue {
-
-
     public CoroutineDispatcherQueue(String name) {
         super(name);
     }

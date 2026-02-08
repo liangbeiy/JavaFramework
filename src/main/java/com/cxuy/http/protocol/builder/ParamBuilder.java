@@ -12,7 +12,6 @@ import com.cxuy.http.protocol.Protocol;
 import com.cxuy.http.protocol.annotation.Param;
 
 import java.lang.annotation.Annotation;
-import java.util.NavigableMap;
 
 public class ParamBuilder implements RequestBuilder {
     public static final String NAME = "ParamBuilder";

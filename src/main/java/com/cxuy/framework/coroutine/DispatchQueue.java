@@ -9,7 +9,6 @@ import com.cxuy.framework.annotation.NonNull;
 import com.cxuy.framework.annotation.Nullable;
 import com.cxuy.framework.coroutine.queue.DispatcherQueue;
 import com.cxuy.framework.coroutine.queue.OnceDispatcherQueue;
-import com.cxuy.framework.coroutine.task.IDLETask;
 import com.cxuy.framework.coroutine.task.Task;
 
 public interface DispatchQueue {
@@ -38,19 +37,12 @@ public interface DispatchQueue {
     }
 
     void sync(@NonNull Task task);
-    void sync(@Nullable Bundle bundle, @NonNull Task task);
     void sync(long delay, @NonNull Task task);
-    void sync(long delay, @Nullable Bundle bundle, @NonNull Task task);
 
-    DispatchContext async(@NonNull Task task);
-    DispatchContext async(@Nullable Bundle bundle, @NonNull Task task);
-    DispatchContext async(long delay, @NonNull Task task);
-    DispatchContext async(long delay, @Nullable Bundle bundle, @NonNull Task task);
+    void async(@NonNull Task task);
+    void async(long delay, @NonNull Task task);
 
-    DispatchContext addIdle(@NonNull IDLETask task);
-    DispatchContext addIdle(long delay, IDLETask idle);
-    DispatchContext addIdle(@Nullable Bundle bundle, @NonNull IDLETask task);
-    DispatchContext addIdle(long delay, Bundle bundle, IDLETask idle);
+    void remove(@NonNull Task task);
 
     void shutdown();
     void awaitShutdown();

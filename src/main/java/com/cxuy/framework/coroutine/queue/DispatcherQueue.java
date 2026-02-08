@@ -5,8 +5,7 @@
 
 package com.cxuy.framework.coroutine.queue;
 
-import com.cxuy.framework.coroutine.Bundle;
-import com.cxuy.framework.coroutine.DispatchContext;
+import com.cxuy.framework.annotation.Nullable;
 import com.cxuy.framework.coroutine.DispatchQueue;
 import com.cxuy.framework.coroutine.exception.DispatcherQueueHasDestroyedException;
 import com.cxuy.framework.coroutine.exception.NeedDestroyDispatcherQueueException;
@@ -24,10 +23,6 @@ public class DispatcherQueue implements DispatchQueue {
     // CPU核心数量
     private static final int CPU_CORE = Runtime.getRuntime().availableProcessors();
 
-    // 自定义线程池
-    // private static final Object REF_POOL_LOCK = new Object();
-    // private static int coroutinePoolRefCount = 0;
-
     private static final String DEFAULT_DISPATCHER_NAME = "default_DispatcherQueue#Name";
 
     protected final String name;
@@ -44,15 +39,12 @@ public class DispatcherQueue implements DispatchQueue {
     private final Object threadLock = new Object();
     protected Thread thread;
 
-    private final Map<Task, DispatchContext> contextMap = new HashMap<>();
-
     private final Object taskQueueLock = new Object();
+    protected Map<Task, TaskItem> taskItemMap = new HashMap<>();
     protected final PriorityQueue<TaskItem> taskQueue = new PriorityQueue<>();
     protected volatile long lastIDLETimestamp;
     protected final PriorityQueue<TaskItem> idleQueue = new PriorityQueue<>();
     protected PriorityQueue<TaskItem> queue;
-
-    protected long submitTaskId = 0;
 
     public DispatcherQueue() {
         this(DEFAULT_DISPATCHER_NAME, false);
@@ -88,25 +80,15 @@ public class DispatcherQueue implements DispatchQueue {
 
     @Override
     public void sync(Task task) {
-        sync(0, null, task);
-    }
-
-    @Override
-    public void sync(Bundle bundle, Task task) {
-        sync(0, bundle, task);
+        sync(0, task);
     }
 
     @Override
     public void sync(long delay, Task task) {
-        sync(delay, null, task);
-    }
-
-    @Override
-    public void sync(long delay, Bundle bundle, Task task) {
         CountDownLatch latch = new CountDownLatch(1);
-        async(delay, bundle, (context) -> {
+        async(delay, () -> {
             try {
-                task.run(context);
+                task.run();
             }
             finally {
                 latch.countDown();
@@ -120,41 +102,28 @@ public class DispatcherQueue implements DispatchQueue {
     }
 
     @Override
-    public DispatchContext async(Task task) {
-        return async(0, null, task);
+    public void async(Task task) {
+        async(0, task);
     }
 
     @Override
-    public DispatchContext async(long delay, Task task) {
-        return async(delay, null, task);
-    }
-
-    @Override
-    public DispatchContext async(Bundle bundle, Task task) {
-        return async(0, bundle, task);
-    }
-
-    @Override
-    public DispatchContext async(long delay, Bundle bundle, Task task) throws DispatcherQueueHasDestroyedException {
+    public void async(long delay, Task task) throws DispatcherQueueHasDestroyedException {
         if(status == Status.DESTROY) {
             throw new DispatcherQueueHasDestroyedException(name);
         }
         if(task == null) {
             throw new NullPointerException("task not allow nullable");
         }
-        boolean containContext = contextMap.containsKey(task);
-        if(containContext) {
-            return contextMap.get(task);
+        TaskItem item = TaskItemManager.get().create(delay, task);
+        if (status == Status.DESTROY) {
+            TaskItemManager.get().recycle(item); // 回收任务项
+            throw new DispatcherQueueHasDestroyedException(name);
         }
-        DispatchContext context = new DispatchContext(submitTaskId, this);
-        context.setBundle(bundle);
-        contextMap.put(task, context);
-        TaskItem item = TaskItemManager.get().acquire(delay, submitTaskId, task);
         synchronized(taskQueueLock) {
-            if (status == Status.DESTROY) {
-                TaskItemManager.get().recycle(item); // 回收任务项
-                throw new DispatcherQueueHasDestroyedException(name);
+            if(taskItemMap.containsKey(task)) {
+                remove(task);
             }
+            taskItemMap.put(task, item);
             if(task instanceof IDLETask) {
                 idleQueue.offer(item);
             }
@@ -162,31 +131,31 @@ public class DispatcherQueue implements DispatchQueue {
                 queue = taskQueue;
                 taskQueue.offer(item);
             }
-            submitTaskId++;
             taskQueueLock.notifyAll();
         }
         createThreadIfNeed();
-        return context;
+        switchWorkQueueIfNeed();
+        synchronized(taskQueueLock) {
+            setStatus(taskQueue.isEmpty() ? Status.IDLE : Status.BUSY);
+            synchronized(taskQueueLock) {
+                queue = taskQueue;
+            }
+        }
     }
 
     @Override
-    public DispatchContext addIdle(IDLETask idle) {
-        return addIdle(0, idle);
-    }
-
-    @Override
-    public DispatchContext addIdle(long delay, IDLETask idle) {
-        return addIdle(delay, null, idle);
-    }
-
-    @Override
-    public DispatchContext addIdle(Bundle bundle, IDLETask idle) {
-        return async(0, bundle, idle);
-    }
-
-    @Override
-    public DispatchContext addIdle(long delay, Bundle bundle, IDLETask idle) {
-        return async(delay, bundle, idle);
+    public void remove(Task task) {
+        if(task == null) {
+            return;
+        }
+        synchronized (taskQueueLock) {
+            TaskItem taskItem = taskItemMap.remove(task);
+            if(taskItem != null) {
+                taskQueue.remove(taskItem);
+                idleQueue.remove(taskItem);
+            }
+        }
+        switchWorkQueueIfNeed();
     }
 
     public void awaitShutdown() {
@@ -236,20 +205,19 @@ public class DispatcherQueue implements DispatchQueue {
         }
     }
 
-    protected void handleTask(DispatchContext context, Task task) {
+    protected void handleTask(Task task) {
         if(task == null) {
             return;
         }
         if(!isCoroutine || task instanceof IDLETask) {
-            task.run(context);
+            task.run();
             if(task instanceof IDLETask && ((IDLETask)task).reuse()) {
-                TaskItem item = TaskItemManager.get().acquire(0, submitTaskId, task);
+                TaskItem item = TaskItemManager.get().create(0, task);
                 synchronized(taskQueueLock) {
                     taskQueue.offer(item);
                 }
                 return;
             }
-            contextMap.remove(task);
             return;
         }
         // is coroutine, pool not be null
@@ -257,16 +225,14 @@ public class DispatcherQueue implements DispatchQueue {
             throw new IllegalStateException("coroutinePool is null");
         }
         if(coroutinePool.isShutdown()) { // 意外情况，降级处理
-            task.run(context);
+            task.run();
             return;
         }
         try {
-            coroutinePool.submit(() -> {
-                task.run(context);
-            });
+            coroutinePool.submit(task);
         }
         catch(RejectedExecutionException e) { // 降级处理 直接执行
-            task.run(context);
+            task.run();
         }
     }
 
@@ -323,9 +289,21 @@ public class DispatcherQueue implements DispatchQueue {
                 thread.start();
             }
         }
-        setStatus(Status.BUSY);
+    }
+
+    private void switchWorkQueueIfNeed() {
         synchronized(taskQueueLock) {
-            queue = taskQueue;
+            if(!taskQueue.isEmpty()) {
+                setStatus(Status.BUSY);
+                queue = taskQueue;
+            }
+            setStatus(Status.IDLE);
+            if(!idleQueue.isEmpty()) {
+                lastIDLETimestamp = TimeUtil.now();
+                queue = idleQueue;
+                return;
+            }
+            setStatus(Status.DORMANT);
         }
     }
 
@@ -349,28 +327,14 @@ public class DispatcherQueue implements DispatchQueue {
                     needExecute = fetchTask(this.ref);
                     queue = this.ref.get();
                     if(queue != null && needExecute != null) {
-                        DispatchContext context = queue.contextMap.get(needExecute);
-                        if(!context.isCancel()) {
-                            queue.handleTask(context, needExecute);
-                        }
+                        queue.handleTask(needExecute);
                     }
                 }
                 catch (Exception e) {
                     if(e instanceof InterruptedException) {
                         Thread.currentThread().interrupt();
                     }
-                    queue = this.ref.get();
-                    if(queue != null) {
-                        synchronized(queue.threadLock) {
-                            queue.thread = null;
-                        }
-                        synchronized(queue.statusLock) {
-                            queue.setStatus(Status.DORMANT);
-                        }
-                        if(queue.isCoroutine) {
-                            queue.shutdownPool(false);
-                        }
-                    }
+                    closeThreadForDormant(this.ref.get());
                     return;
                 }
             }
@@ -381,18 +345,14 @@ public class DispatcherQueue implements DispatchQueue {
             if(q == null || q.status == Status.DESTROY) {
                 return null;
             }
+            q.switchWorkQueueIfNeed();
+            synchronized(q.statusLock) {
+                if(q.getStatus() == Status.DORMANT) {
+                    throw new NeedDestroyDispatcherQueueException(q.name);
+                }
+            }
             final Object queueLock = q.taskQueueLock;
             synchronized(queueLock) {
-                if(q.queue.isEmpty() && q.queue != q.idleQueue) { // 尝试切换至idle执行
-                    synchronized(q.statusLock) {
-                        q.setStatus(Status.IDLE);
-                    }
-                    q.lastIDLETimestamp = TimeUtil.now();
-                    q.queue = q.idleQueue;
-                    if(q.queue.isEmpty()) { // 如果还是没有任务 应该结束掉当前线程
-                        throw new NeedDestroyDispatcherQueueException(q.name);
-                    }
-                }
                 TaskItem item = q.queue.poll();
                 if(item == null) {
                     return null;
@@ -401,6 +361,7 @@ public class DispatcherQueue implements DispatchQueue {
                 long itemRunMills = item.getTask() instanceof IDLETask ? item.getDelay() + q.lastIDLETimestamp : item.getRunMills();
                 if(itemRunMills <= current) {
                     Task needExecute = item.getTask();
+                    q.taskItemMap.remove(needExecute);
                     TaskItemManager.get().recycle(item);
                     return needExecute;
                 }
@@ -418,6 +379,18 @@ public class DispatcherQueue implements DispatchQueue {
                     }
                     return null;
                 }
+            }
+        }
+
+        private void closeThreadForDormant(@Nullable DispatcherQueue queue) {
+            if(queue == null) {
+                return;
+            }
+            synchronized(queue.threadLock) {
+                queue.thread = null;
+            }
+            if(queue.isCoroutine) {
+                queue.shutdownPool(false);
             }
         }
     }

@@ -5,8 +5,8 @@
 
 package com.cxuy.framework.io.file.execute;
 
-import com.cxuy.framework.coroutine.queue.DispatcherQueue;
 import com.cxuy.framework.coroutine.DispatchQueue.Status;
+import com.cxuy.framework.coroutine.queue.DispatcherQueue;
 import com.cxuy.framework.coroutine.task.Task;
 import com.cxuy.framework.util.Logger;
 
@@ -41,7 +41,7 @@ public class FileExecutor implements DispatcherQueue.StatusObserver {
      * @param task 操作任务
      */
     public void share(Task task) {
-        worker.async((workerContext) -> {
+        worker.async(() -> {
             try {
                 readMutex.acquire();
                 readerCount++;
@@ -50,8 +50,8 @@ public class FileExecutor implements DispatcherQueue.StatusObserver {
                 }
                 readMutex.release();
 
-                DispatcherQueue.io.async((context) -> {
-                    task.run(context);
+                DispatcherQueue.io.async(() -> {
+                    task.run();
                     // 开始释放信号量
                     try {
                         readMutex.acquire();
@@ -76,10 +76,10 @@ public class FileExecutor implements DispatcherQueue.StatusObserver {
      * @param task 操作任务
      */
     public void mutex(Task task) {
-        worker.async((context) -> {
+        worker.async(() -> {
             try {
                 writeMutex.acquire();
-                task.run(context);
+                task.run();
                 writeMutex.release();
             } catch(InterruptedException e) {
                 Logger.e(TAG, "Acquiring Semaphore failure. ");

@@ -73,7 +73,7 @@ public class Client {
                 interceptor.beforeSubmitRequest(this, request);
             }
         }
-        DispatcherQueue.io.async((context) -> {
+        DispatcherQueue.io.async(() -> {
             Response response = sync(request);
             callback.response(this, request, response);
         });

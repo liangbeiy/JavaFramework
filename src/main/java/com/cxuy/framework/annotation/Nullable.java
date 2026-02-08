@@ -5,7 +5,7 @@
 
 package com.cxuy.framework.annotation;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Inherited;
 
 @Inherited
 public @interface Nullable {

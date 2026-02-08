@@ -6,10 +6,13 @@
 package com.cxuy.framework.eventbus.cross;
 
 import com.cxuy.framework.coroutine.queue.DispatcherQueue;
-import com.cxuy.framework.eventbus.cross.model.Operation;
-import com.cxuy.framework.eventbus.cross.model.UnregisterAllModal;
+import com.cxuy.framework.eventbus.cross.protocol.Constants;
+import com.cxuy.framework.eventbus.cross.protocol.Operation;
+import com.cxuy.framework.eventbus.cross.protocol.message.HeartbeatResponseMessage;
+import com.cxuy.framework.eventbus.cross.protocol.message.UnregisterMessage;
 import com.cxuy.framework.lifecycle.DefaultLifecycleOwner;
 import com.cxuy.framework.lifecycle.LifecycleState;
+import com.cxuy.framework.util.JsonUtil;
 import com.cxuy.framework.util.Logger;
 import com.cxuy.framework.util.TextUtil;
 
@@ -30,11 +33,11 @@ public class InterProcessServer extends DefaultLifecycleOwner {
 
     public void start() {
         setState(LifecycleState.WILL_START);
-        acceptWorker.async(dispatchContext -> {
+        acceptWorker.async(() -> {
             ServerSocket serverSocket = null;
             try {
-                serverSocket = new ServerSocket(9229);
-                Logger.d(TAG, "socket port=" + 9229);
+                serverSocket = new ServerSocket(Constants.SOCKET_SERVER_START_PORT);
+                Logger.d(TAG, "socket port=" + Constants.SOCKET_SERVER_START_PORT);
                 setState(LifecycleState.DID_START);
                 while(getState().rawValue < LifecycleState.WILL_DESTROY.rawValue) {
                     Socket client = serverSocket.accept();
@@ -57,15 +60,15 @@ public class InterProcessServer extends DefaultLifecycleOwner {
     }
 
     public void close(InterProcessClientHandler handler) {
-        unregisterClient(UnregisterAllModal.class.getName(), handler);
+        unregisterClient(UnregisterMessage.DATA_UNREGISTER_ALL, handler);
     }
 
     public void registerClient(String type, InterProcessClientHandler handler) {
         if(TextUtil.isEmpty(type) || handler == null) {
             return;
         }
-        if(TextUtil.equals(UnregisterAllModal.class.getName(), type)) {
-            Logger.w(TAG, "a message has been received, but its type is type of " + UnregisterAllModal.class.getSimpleName() + "UnregisterAll and operation is " + Operation.REGISTER.rawValue);
+        if(TextUtil.equals(UnregisterMessage.DATA_UNREGISTER_ALL, type)) {
+            Logger.w(TAG, "a message has been received, but its type is type of " + UnregisterMessage.DATA_UNREGISTER_ALL + "UnregisterAll and operation is " + Operation.REGISTER.rawValue);
             return;
         }
         Set<InterProcessClientHandler> handlers = subscribers.get(type);
@@ -91,7 +94,7 @@ public class InterProcessServer extends DefaultLifecycleOwner {
             return;
         }
         Set<String> emptyEvent = new HashSet<>();
-        if(TextUtil.equals(type, UnregisterAllModal.class.getName())) {
+        if(TextUtil.equals(UnregisterMessage.DATA_UNREGISTER_ALL, type)) {
             for(Map.Entry<String, Set<InterProcessClientHandler>> entry : subscribers.entrySet()) {
                 Set<InterProcessClientHandler> handlers = entry.getValue();
                 handlers.remove(poster);
@@ -112,6 +115,10 @@ public class InterProcessServer extends DefaultLifecycleOwner {
         for(String typeName : emptyEvent) {
             subscribers.remove(typeName);
         }
+    }
+
+    public void responseHeartbeatCheck(InterProcessClientHandler handler) {
+        handler.receiveMessage(JsonUtil.toJson(HeartbeatResponseMessage.get()));
     }
 
 }

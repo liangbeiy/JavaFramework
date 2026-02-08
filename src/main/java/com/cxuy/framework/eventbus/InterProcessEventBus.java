@@ -5,17 +5,23 @@
 
 package com.cxuy.framework.eventbus;
 
-import com.cxuy.framework.coroutine.DispatchContext;
+import com.cxuy.framework.annotation.Nullable;
 import com.cxuy.framework.coroutine.queue.DispatcherQueue;
+import com.cxuy.framework.coroutine.task.Task;
 import com.cxuy.framework.eventbus.annotate.Subscribe;
 import com.cxuy.framework.eventbus.cross.InterProcessServer;
-import com.cxuy.framework.eventbus.cross.constant.Constants;
-import com.cxuy.framework.eventbus.cross.constant.Params;
-import com.cxuy.framework.eventbus.cross.model.Message;
+import com.cxuy.framework.eventbus.cross.protocol.Constants;
+import com.cxuy.framework.eventbus.cross.protocol.Message;
+import com.cxuy.framework.eventbus.cross.protocol.Operation;
+import com.cxuy.framework.eventbus.cross.protocol.data.PostData;
+import com.cxuy.framework.eventbus.cross.protocol.message.*;
 import com.cxuy.framework.util.JsonUtil;
 import com.cxuy.framework.util.Logger;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Socket;
@@ -25,7 +31,6 @@ import java.util.*;
 public final class InterProcessEventBus implements EventBus {
     private static final String TAG = "InterProcessEventBus";
     private static final String TCP_HOST = "localhost";
-    private static final int TCP_PORT = 9229; // 与服务端端口一致
 
     private static class HOLDER {
         private static final InterProcessEventBus INSTANCE = new InterProcessEventBus();
@@ -43,20 +48,8 @@ public final class InterProcessEventBus implements EventBus {
     private OutputStream outputStream;
     private BufferedReader reader;
 
-    private DispatchContext cancelContext = null;
-    private final DispatcherQueue.Task heartbeatTask = (heartbeatContext) -> {
-        if(cancelContext != null) {
-            cancelContext.cancel();
-        }
-        Message<String> message = Message.heartbeatMessage();
-        sendMessage(null, message);
-        cancelContext = worker.async(Constants.HEARTBEAT_TIMEOUT, (context) -> {
-            Logger.e(TAG, "Heartbeat timeout, reconnecting...");
-            closeSocket();
-            connect();
-        });
-        worker.async(Constants.HEARTBEAT_INTERVAL, get().heartbeatTask);
-    };
+    @Nullable
+    private Task heartbeatTimeoutTask = null;
 
     public static InterProcessEventBus get() {
         return HOLDER.INSTANCE;
@@ -64,7 +57,6 @@ public final class InterProcessEventBus implements EventBus {
 
     private InterProcessEventBus() {
         connect();
-        worker.async(heartbeatTask);
     }
 
 
@@ -73,7 +65,7 @@ public final class InterProcessEventBus implements EventBus {
         if(subscriber == null) {
             return;
         }
-        worker.async((context) -> {
+        worker.async(() -> {
             if(registers.containsKey(subscriber)) {
                 return;
             }
@@ -81,52 +73,58 @@ public final class InterProcessEventBus implements EventBus {
             SubscriberWrapper wrapper = generateWrapper(subscriber);
             registers.put(subscriber, wrapper);
             // 发送消息进行注册
-            for(Class<?> event : wrapper.getEvents()) {
-                Message<?> message = Message.registerMessage(event);
-                register(subscriber, message);
-            }
+            register(subscriber, new RegisterMessage(wrapper.getEvents()));
         });
     }
 
     @Override
     public void unregister(Object subscriber) {
-        Message<?> message = Message.unregisterAllMessage();
-        worker.async((context) -> {
+        Message<?> message = UnregisterMessage.unregisterAll();
+        worker.async(() -> {
             unregister(subscriber, message);
         });
     }
 
     @Override
     public void post(Object event) {
-        Message<?> message = Message.postMessage(event);
-        worker.async((context) -> {
+        Message<?> message = new PostMessage(PostData.create(event));
+        worker.async(() -> {
             post(message);
         });
     }
 
-    private void register(Object subscriber, Message<?> message) {
-        if(subscriber == null || message == null) {
+    private void register(Object subscriber, Message<?> msg) {
+        if(subscriber == null || msg == null) {
+            return;
+        }
+        RegisterMessage message;
+        try {
+            message = (RegisterMessage) msg;
+        } catch (ClassCastException e) {
+            Logger.e(TAG, "an exception has occurred while casting to RegisterMessage", e);
             return;
         }
         boolean registerIsSuccessful = sendMessage(subscriber, message);
         if(!registerIsSuccessful) {
             return;
         }
-        try {
-            Class<?> event = Class.forName(message.type);
-            SubscriberWrapper wrapper = registers.get(subscriber);
-            if(wrapper == null) {
-                return;
+        for(String name : message.data) {
+            try {
+                Class<?> event = Class.forName(name);
+                SubscriberWrapper wrapper = registers.get(subscriber);
+                if(wrapper == null) {
+                    return;
+                }
+                wrapper.activeMethod(event);
+                Set<SubscriberWrapper> subSet = subscribers.get(event);
+                if(subSet == null) {
+                    subSet = new HashSet<>();
+                    subscribers.put(event, subSet);
+                    subSet.add(wrapper);
+                }
+            } catch (ClassNotFoundException e) {
+                Logger.e(TAG, "cannot find class of name=" + name);
             }
-            wrapper.activeMethod(event);
-            Set<SubscriberWrapper> subSet = subscribers.get(event);
-            if(subSet == null) {
-                subSet = new HashSet<>();
-                subscribers.put(event, subSet);
-                subSet.add(wrapper);
-            }
-        } catch (ClassNotFoundException e) {
-            Logger.e(TAG, "cannot find class of name=" + message.type);
         }
     }
 
@@ -140,44 +138,88 @@ public final class InterProcessEventBus implements EventBus {
 
     private boolean sendMessage(Object poster, Message<?> message) {
         if(!isConnect()) {
-            pendingMessages.add(new PendingMessage(poster, message));
+            if(message instanceof HeartbeatCheckMessage) {
+                if(heartbeatTimeoutTask != null) {
+                    worker.remove(heartbeatTimeoutTask);
+                    heartbeatTimeoutTask = null;
+                }
+                closeSocket();
+            } else {
+                pendingMessages.add(new PendingMessage(poster, message));
+            }
             return false;
         }
-        String json = Message.encode(message);
+        String json = message.encode() + "\n";
         try {
             outputStream.write(json.getBytes(StandardCharsets.UTF_8));
             outputStream.flush();
             return true;
         } catch (IOException e) {
-            pendingMessages.add(new PendingMessage(poster, message));
+            if(message instanceof HeartbeatCheckMessage) {
+                if(heartbeatTimeoutTask != null) {
+                    worker.remove(heartbeatTimeoutTask);
+                    heartbeatTimeoutTask = null;
+                }
+                closeSocket();
+            } else {
+                pendingMessages.add(new PendingMessage(poster, message));
+            }
         }
         return false;
     }
 
     private void handleEvent(String messageJson) {
-        Message<?> message = Message.decode(messageJson);
-        if(message == null) {
-            return;
-        }
-        try {
-            Class<?> clazz = Class.forName(message.type);
-            Object data = JsonUtil.getValue(messageJson, Params.PARAM_NAME_DATA, clazz);
-            Set<SubscriberWrapper> wrappers = subscribers.get(clazz);
-            for(SubscriberWrapper wrapper : wrappers) {
-                wrapper.handleEvent(clazz, data);
+        Operation operation = JsonUtil.getValue(messageJson, Message.PARAMS_KEY_OPERATION, Operation.class);
+        Logger.d(TAG, "event bus: current operation=" + operation);
+        switch(operation) {
+            case POST -> {
+                PostData postData = JsonUtil.getValue(messageJson, Message.PARAMS_KEY_DATA, PostData.class);
+                if(postData == null) {
+                    return;
+                }
+                try {
+                    Class<?> clazz = Class.forName(postData.type);
+                    Object data = JsonUtil.fromJson(postData.value, clazz);
+                    Set<SubscriberWrapper> wrappers = subscribers.get(clazz);
+                    for(SubscriberWrapper wrapper : wrappers) {
+                        wrapper.handleEvent(clazz, data);
+                    }
+                } catch (ClassNotFoundException e) {
+                    Logger.e(TAG, "error", e);
+                }
             }
-        } catch (ClassNotFoundException e) {
-            Logger.e(TAG, "error", e);
+            case HEARTBEAT_CHECK -> {
+                post(HeartbeatResponseMessage.get());
+            }
+            case HEARTBEAT_RESPONSE -> {
+                if(heartbeatTimeoutTask != null) {
+                    worker.remove(heartbeatTimeoutTask);
+                    heartbeatTimeoutTask = null;
+                }
+                worker.async(Constants.HEARTBEAT_INTERVAL, () -> {
+                    checkServerForHeartbeatCheck();
+                });
+            }
+            default -> {
+                Logger.w(TAG, "message has been received but it not be executed. ");
+            }
         }
     }
 
     private void connect() {
         try {
-            socket = new Socket(TCP_HOST, TCP_PORT);
+            socket = new Socket(TCP_HOST, Constants.SOCKET_SERVER_START_PORT);
             outputStream = socket.getOutputStream();
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
             Logger.d(TAG, "inter process connected...");
             startReceive();
+            if(heartbeatTimeoutTask != null) {
+                worker.remove(heartbeatTimeoutTask);
+                heartbeatTimeoutTask = null;
+            }
+            worker.async(Constants.HEARTBEAT_INTERVAL, () -> {
+                checkServerForHeartbeatCheck();
+            });
             handlePendingMessage();
         } catch (IOException e) {
             Logger.e(TAG, "fail to connect inter process server", e);
@@ -187,7 +229,7 @@ public final class InterProcessEventBus implements EventBus {
 
     public void handlePendingMessage() {
         // 处理全部挂起事件
-        DispatcherQueue.io.async(context -> {
+        DispatcherQueue.io.async(() -> {
             synchronized(pendingQueueLock) {
                 Queue<PendingMessage> copyList = new LinkedList<>(pendingMessages);
                 pendingMessages.clear();
@@ -207,7 +249,7 @@ public final class InterProcessEventBus implements EventBus {
     }
 
     private void startReceive() {
-        interWorker.async((context) -> {
+        interWorker.async(() -> {
             try {
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -223,14 +265,14 @@ public final class InterProcessEventBus implements EventBus {
 
     private void closeSocket() {
         try {
-            if (socket != null) {
-                socket.close();
+            if (reader != null) {
+                reader.close();
             }
             if (outputStream != null) {
                 outputStream.close();
             }
-            if (reader != null) {
-                reader.close();
+            if (socket != null) {
+                socket.close();
             }
         } catch (IOException e) {
             /* 忽略 */
@@ -261,6 +303,15 @@ public final class InterProcessEventBus implements EventBus {
             wrapperMethod.add(method);
         }
         return wrapper;
+    }
+
+    private void checkServerForHeartbeatCheck() {
+        heartbeatTimeoutTask = () -> {
+            Logger.w(TAG, "fail to heartbeat check for server, timeout");
+            closeSocket();
+        };
+        worker.async(Constants.HEARTBEAT_TIMEOUT, heartbeatTimeoutTask);
+        post(HeartbeatCheckMessage.get());
     }
 
     private record PendingMessage(Object poster, Message<?> message) {  }

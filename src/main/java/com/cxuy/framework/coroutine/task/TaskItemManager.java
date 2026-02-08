@@ -5,10 +5,11 @@
 
 package com.cxuy.framework.coroutine.task;
 
-import com.cxuy.framework.annotation.NonNull;
 import com.cxuy.framework.annotation.Nullable;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 
 public final class TaskItemManager {
@@ -21,25 +22,44 @@ public final class TaskItemManager {
         return HOLDER.INSTANCE;
     }
 
-    private final Object itemPoolLock = new Object();
-    private final Queue<TaskItem> itemPool = new LinkedList<>();
+    private final Object busyItemPoolLock = new Object();
+    private final Map<Long, TaskItem> busyItemMap = new HashMap<>();
+
+    private final Object freeItemPoolLock = new Object();
+    private long taskId = 0;
+    private final Queue<TaskItem> freeItemPool = new LinkedList<>();
 
     @Nullable
-    public TaskItem acquire(long delay, long id, @NonNull Task task) {
+    public TaskItem create(long delay, @Nullable Task task) {
         if(task == null) {
             return null;
         }
         TaskItem item;
-        synchronized(itemPoolLock) {
-            item = itemPool.poll();
+        long assignedId;
+        synchronized(freeItemPoolLock) {
+            item = freeItemPool.poll();
+            assignedId = taskId;
+            taskId++;
         }
         if(item == null) { // 池子内无元素说明全部正在使用
-            item = new TaskItem(delay, task, id);
+            item = new TaskItem(delay, task, assignedId);
         }
         else {
             item.setDelay(delay);
             item.setTask(task);
-            item.setId(id);
+            item.setId(assignedId);
+        }
+        synchronized(busyItemPoolLock) {
+            busyItemMap.put(assignedId, item);
+        }
+        return item;
+    }
+
+    @Nullable
+    public TaskItem open(long taskId) {
+        TaskItem item;
+        synchronized(busyItemPoolLock) {
+            item = busyItemMap.get(taskId);
         }
         return item;
     }
@@ -52,9 +72,9 @@ public final class TaskItemManager {
         task.setRunMills(0);
         task.setDelay(0);
         task.setId(Long.MAX_VALUE);
-        synchronized(itemPoolLock) {
-            if(itemPool.size() < ITEM_POOL_MAX) {
-                itemPool.offer(task);
+        synchronized(freeItemPoolLock) {
+            if(freeItemPool.size() < ITEM_POOL_MAX) {
+                freeItemPool.offer(task);
             }
         }
     }

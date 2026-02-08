@@ -43,7 +43,7 @@ public final class CachePool<K, M> {
             return; 
         }
         if(searchMap.containsKey(key)) {
-            worker.async((context) -> {
+            worker.async(() -> {
                 Node<K, M> node = searchMap.remove(key); 
                 node.model = model; 
                 remove(node);
@@ -54,7 +54,7 @@ public final class CachePool<K, M> {
         Node<K, M> node = obtain(); 
         node.key = key; 
         node.model = model; 
-        worker.async((context) -> {
+        worker.async(() -> {
             searchMap.put(key, node); 
             insert(head, node);
         });
@@ -68,7 +68,7 @@ public final class CachePool<K, M> {
         if(key == null) {
             return; 
         }
-        worker.async((context) -> {
+        worker.async(() -> {
             Node<K, M> node = searchMap.remove(key); 
             if(node == null) {
                 return; 
@@ -90,7 +90,7 @@ public final class CachePool<K, M> {
         if(key == null) {
             return; 
         }
-        worker.async((context) -> {
+        worker.async(() -> {
             Node<K, M> node = searchMap.get(key); 
             if(node == null) {
                 callback.callback(this, key, null);

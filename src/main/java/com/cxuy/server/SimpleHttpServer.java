@@ -5,30 +5,22 @@
 
 package com.cxuy.server;
 
-import com.cxuy.framework.annotation.NonNull;
-import com.cxuy.framework.annotation.Nullable;
 import com.cxuy.framework.context.Context;
 import com.cxuy.framework.lifecycle.LifecycleObserver;
 import com.cxuy.framework.lifecycle.LifecycleOwner;
 import com.cxuy.framework.lifecycle.LifecycleState;
-import com.cxuy.framework.util.JsonUtil;
 import com.cxuy.framework.util.Logger;
-import com.cxuy.framework.util.TextUtil;
-import com.cxuy.server.annotation.*;
-import com.cxuy.server.model.JsonRpc;
-import com.sun.net.httpserver.HttpExchange;
+import com.cxuy.server.annotation.HttpHandler;
+import com.cxuy.server.annotation.HttpHandlerScanner;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Parameter;
 import java.net.InetSocketAddress;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class SimpleHttpServer implements Server, LifecycleOwner {
 

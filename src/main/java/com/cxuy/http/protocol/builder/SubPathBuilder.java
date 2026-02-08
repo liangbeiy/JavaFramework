@@ -9,7 +9,6 @@ import com.cxuy.framework.annotation.NonNull;
 import com.cxuy.framework.annotation.Nullable;
 import com.cxuy.http.client.Request;
 import com.cxuy.http.protocol.Protocol;
-import com.cxuy.http.protocol.annotation.Param;
 import com.cxuy.http.protocol.annotation.SubPath;
 
 import java.lang.annotation.Annotation;

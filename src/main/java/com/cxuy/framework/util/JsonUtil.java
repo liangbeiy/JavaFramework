@@ -34,12 +34,12 @@ public final class JsonUtil {
     }
 
     @Nullable
-    public static <T> T getValue(String jsonStr, String key, Class<T> clazz) {
-        return getValue(jsonStr, key, clazz, null);
+    public static <T> T getValue(String jsonStr, String key, Type type) {
+        return getValue(jsonStr, key, null, type);
     }
 
     @Nullable
-    public static <T> T getValue(String jsonStr, String key, Class<T> clazz, T defaultValue) {
+    public static <T> T getValue(String jsonStr, String key, T defaultValue, Type rawType, Type... templateTypes) {
         if(TextUtil.isEmpty(jsonStr) || TextUtil.isEmpty(key)) {
             return defaultValue;
         }
@@ -48,7 +48,8 @@ public final class JsonUtil {
         if(valueJson == null) {
             return defaultValue;
         }
-        T value = fromJson(valueJson.toString(), clazz);
+        Type type = TypeToken.getParameterized(rawType, templateTypes).getType();
+        T value = fromJson(valueJson.toString(), type);
         return value == null ? defaultValue : value;
     }
 

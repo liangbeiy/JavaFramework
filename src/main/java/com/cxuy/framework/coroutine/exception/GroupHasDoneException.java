@@ -5,8 +5,8 @@
 
 package com.cxuy.framework.coroutine.exception;
 
-public class GroupHasDoneException extends RuntimeException {
+public class GroupHasDoneException extends GroupStatusErrorException {
     public GroupHasDoneException() {
-        super("DispatchGroup has been marked DONE, you need to create a new group instead of use the old instance. ");
+        super("DispatchGroup has been marked DONE, you need to create a new group instead of using the old instance. ");
     }
 }

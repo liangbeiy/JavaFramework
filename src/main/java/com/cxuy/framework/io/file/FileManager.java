@@ -83,7 +83,7 @@ public class FileManager implements FileExecutorIsEmptyCallback {
         synchronized(transactionLock) {
             executor = transaction.computeIfAbsent(modifyPath, s -> new FileExecutor(path, this));
         }
-        executor.mutex((context) -> {
+        executor.mutex(() -> {
             File file = new File(modifyPath);
             if(file.exists()) {
                 return;
@@ -128,7 +128,7 @@ public class FileManager implements FileExecutorIsEmptyCallback {
         synchronized(transactionLock) {
             executor = transaction.computeIfAbsent(modifyPath, s -> new FileExecutor(path, this));
         }
-        executor.share((context) -> {
+        executor.share(() -> {
             try {
                 byte[] bytes = Files.readAllBytes(Paths.get(modifyPath));
                 callback.callback(path, new String(bytes, StandardCharsets.UTF_8));
@@ -182,7 +182,7 @@ public class FileManager implements FileExecutorIsEmptyCallback {
         synchronized(transactionLock) {
             executor = transaction.computeIfAbsent(modifyPath, _ -> new FileExecutor(path, this));
         }
-        executor.mutex(_ -> {
+        executor.mutex(() -> {
             File file = new File(modifyPath);
             if(!file.exists()) {
                 return;
@@ -222,7 +222,7 @@ public class FileManager implements FileExecutorIsEmptyCallback {
             executor = transaction.computeIfAbsent(modifyPath, _ -> { return new FileExecutor(modifyPath, this); });
         }
         File opFile = new File(modifyPath);
-        executor.share(_ -> {
+        executor.share(() -> {
             try(RandomAccessFile raf = new RandomAccessFile(opFile, "r"); FileChannel channel = raf.getChannel()) {
                 try(FileLock lock = channel.lock(0, META_INFO_SIZE, true)) {
                     long fileLength = raf.length();
@@ -252,7 +252,7 @@ public class FileManager implements FileExecutorIsEmptyCallback {
             executor = transaction.computeIfAbsent(modifyPath, _ -> { return new FileExecutor(modifyPath, this); });
         }
         File opFile = new File(modifyPath);
-        executor.mutex(_ -> {
+        executor.mutex(() -> {
             try (RandomAccessFile raf = new RandomAccessFile(opFile, "rw"); FileChannel channel = raf.getChannel()) {
                 try(FileLock lock = channel.lock(0, 8, false)) {
                     MappedByteBuffer checkBuffer = channel.map(FileChannel.MapMode.READ_WRITE, META_INFO_POSITION, META_INFO_SIZE);
@@ -296,7 +296,7 @@ public class FileManager implements FileExecutorIsEmptyCallback {
         synchronized(transactionLock) {
             executor = transaction.computeIfAbsent(modifyPath, s -> new FileExecutor(path, this));
         }
-        executor.mutex((context) -> {
+        executor.mutex(() -> {
             File file = new File(modifyPath);
             // 确保父目录存在
             File parentDir = file.getParentFile();
@@ -335,7 +335,7 @@ public class FileManager implements FileExecutorIsEmptyCallback {
         synchronized(transactionLock) {
             executor = transaction.computeIfAbsent(modifyPath, s -> new FileExecutor(path, this));
         }
-        executor.mutex((context) -> {
+        executor.mutex(() -> {
             File file = new File(modifyPath);
             // 确保父目录存在
             File parentDir = file.getParentFile();

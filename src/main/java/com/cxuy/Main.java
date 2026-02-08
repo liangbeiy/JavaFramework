@@ -5,10 +5,13 @@
 
 package com.cxuy;
 
-import com.cxuy.framework.context.BuildConfig;
 import com.cxuy.framework.context.Context;
 import com.cxuy.framework.context.FrameworkContext;
+import com.cxuy.framework.eventbus.InterProcessEventBus;
+import com.cxuy.framework.eventbus.annotate.Subscribe;
+import com.cxuy.framework.eventbus.cross.InterProcessServer;
 import com.cxuy.framework.io.file.FileManager;
+import com.cxuy.framework.util.Logger;
 
 public class Main {
     private static final String TAG = "MAIN";
@@ -19,5 +22,25 @@ public class Main {
         context.destroy();
     }
 
-    public static void run(Context context) {  }
+    public static void run(Context context) {
+        // runAsServer();
+        runAsClient();
+    }
+
+    public static void runAsServer() {
+        InterProcessServer server = new InterProcessServer();
+        server.start();
+    }
+
+    public static void runAsClient() {
+        C c = new C();
+        InterProcessEventBus.get().register(c);
+    }
+
+    public static class C {
+        @Subscribe
+        private void hello(String name) {
+            Logger.d(TAG, "receive message: name" + name);
+        }
+    }
 }

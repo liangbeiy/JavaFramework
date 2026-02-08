@@ -32,7 +32,7 @@ public class LiveData<T> {
         if(owner == null) {
             return;
         }
-        DispatcherQueue.standard.async((context) -> {
+        DispatcherQueue.standard.async(() -> {
             LifecycleOwnerWrapper wrapper = null;
             for(LifecycleOwnerWrapper w : observers.keySet()) {
                 if(owner == w.owner) {

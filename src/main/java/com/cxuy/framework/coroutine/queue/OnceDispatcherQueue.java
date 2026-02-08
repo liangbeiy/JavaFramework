@@ -6,8 +6,6 @@
 package com.cxuy.framework.coroutine.queue;
 
 import com.cxuy.framework.annotation.NonNull;
-import com.cxuy.framework.coroutine.Bundle;
-import com.cxuy.framework.coroutine.DispatchContext;
 import com.cxuy.framework.coroutine.task.Task;
 
 import java.util.HashSet;

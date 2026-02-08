@@ -37,7 +37,7 @@ public class LocalEventBus implements EventBus {
         if(subscriber == null) {
             return;
         }
-        worker.async((context) -> {
+        worker.async(() -> {
             if(registers.containsKey(subscriber)) {
                 return;
             }
@@ -61,7 +61,7 @@ public class LocalEventBus implements EventBus {
         if(event == null) {
             return;
         }
-        worker.async((context) -> {
+        worker.async(() -> {
             Class<?> eventType = event.getClass();
             Set<SubscriberWrapper> wrappers = subscribers.get(eventType);
             for(SubscriberWrapper wrapper : wrappers) {
@@ -75,7 +75,7 @@ public class LocalEventBus implements EventBus {
         if(subscriber == null) {
             return;
         }
-        worker.async((context) -> {
+        worker.async(() -> {
             SubscriberWrapper wrapper = registers.get(subscriber);
             if(wrapper == null) {
                 return;

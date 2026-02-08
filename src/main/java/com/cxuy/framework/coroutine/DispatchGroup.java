@@ -6,10 +6,13 @@
 package com.cxuy.framework.coroutine;
 
 import com.cxuy.framework.annotation.Nullable;
+import com.cxuy.framework.coroutine.exception.GroupHasCommittedException;
 import com.cxuy.framework.coroutine.exception.GroupHasDoneException;
-import com.cxuy.framework.coroutine.queue.DispatcherQueue;
+import com.cxuy.framework.coroutine.exception.GroupStatusErrorException;
+import com.cxuy.framework.coroutine.task.Task;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 public class DispatchGroup {
@@ -22,123 +25,138 @@ public class DispatchGroup {
         this.autoLeave = autoLeave;
     }
 
-    private boolean isDone = false;
     private final boolean autoLeave;
-    private final Object builderLock = new Object();
-    private final Semaphore semaphore = new Semaphore(0);
 
+    private final Object statusLock = new Object();
+    private Status status = Status.BUILDING;
+
+    private final Object builderLock = new Object();
     @Nullable
     private Transaction.Builder transactionBuilder;
 
-    public void async(DispatcherQueue queue, DispatcherQueue.Task task) {
-        async(queue, null, task);
-    }
 
-    public void async(DispatcherQueue queue, Bundle bundle, DispatcherQueue.Task task) {
+    private final Semaphore semaphore = new Semaphore(0);
+
+    public void async(DispatchQueue queue, Task task) {
         if(queue == null || task == null) {
             return;
         }
-        if(isDone) {
-            throw new GroupHasDoneException();
-        }
+        checkStatus(Status.BUILDING);
         synchronized(builderLock) {
             if(transactionBuilder == null) {
                 this.transactionBuilder = new Transaction.Builder();
             }
-            transactionBuilder.append(queue, bundle, task);
+            transactionBuilder.append(queue, task);
         }
     }
 
-    public void notify(DispatcherQueue queue, DispatcherQueue.Task task) {
-        notify(queue, null, task);
-    }
-
-    public void notify(DispatcherQueue queue, Bundle bundle, DispatcherQueue.Task task) {
+    public void notify(DispatchQueue queue, Task task) {
         if(queue == null || task == null) {
             return;
         }
-        if(isDone) {
-            throw new GroupHasDoneException();
+        synchronized(statusLock) {
+            checkStatus(Status.BUILDING);
+            status = Status.COMMITTED;
         }
         Transaction newTransaction;
-        synchronized(builderLock) {
+        synchronized (builderLock) {
             if(transactionBuilder == null) {
                 return;
             }
-            newTransaction = transactionBuilder
-                    .notifyTask(queue, task)
+            newTransaction = transactionBuilder.notifyTask(queue, task)
                     .build();
             transactionBuilder = null;
         }
-        Map<DispatcherQueue.Task, DispatcherQueue> tasks = newTransaction.tasks;
-        Map<DispatcherQueue.Task, Bundle> bundles = newTransaction.bundles;
-        for(Map.Entry<DispatcherQueue.Task, DispatcherQueue> entry : tasks.entrySet()) {
-            entry.getValue().async(bundles.get(entry.getKey()), (context) -> {
-                entry.getKey().run(context);
+        // 开始执行
+        Map<Task, DispatchQueue> tasks = newTransaction.tasks;
+        for(Map.Entry<Task, DispatchQueue> entry : tasks.entrySet()) {
+            entry.getValue().async(() -> {
+                entry.getKey().run();
                 if(autoLeave) {
                     semaphore.release();
                 }
             });
         }
-        DispatcherQueue.io.async(bundle, (context) -> {
+        new Thread(() -> {
             try {
                 semaphore.acquire(tasks.size());
-                newTransaction.notifyQueue.async(bundle, newTransaction.notifyTask);
-                isDone = true;
+                newTransaction.notifyQueue.async(newTransaction.notifyTask);
+                synchronized(statusLock) {
+                    checkStatus(Status.COMMITTED);
+                    status = Status.DONE;
+                }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-        });
+        }).start();
     }
 
     public void leave() {
-        if(isDone) {
-            throw new GroupHasDoneException();
+        if(autoLeave) {
+            return;
         }
+        checkStatus(Status.COMMITTED);
         semaphore.release();
     }
 
+    private void checkStatus(Status expected) {
+        Status current;
+        synchronized(statusLock) {
+            current = expected;
+        }
+        if(current == status) {
+            return;
+        }
+        if(current == Status.BUILDING) {
+            throw new GroupStatusErrorException("the group's status is in error, and is expected to be" + current.name() + " instead of" + Status.BUILDING.name());
+        }
+        if(current == Status.COMMITTED) {
+            throw new GroupHasCommittedException();
+        }
+        if(current == Status.DONE) {
+            throw new GroupHasDoneException();
+        }
+    }
+
+    private enum Status {
+        BUILDING,
+        COMMITTED,
+        DONE;
+    }
+
     private static final class Transaction {
-        public final Semaphore semaphore = new Semaphore(0);
-        public final Map<DispatcherQueue.Task, Bundle> bundles;
-        public final Map<DispatcherQueue.Task, DispatcherQueue> tasks;
-        public final DispatcherQueue notifyQueue;
-        public final DispatcherQueue.Task notifyTask;
-        public Transaction(Map<DispatcherQueue.Task, Bundle> bundles, Map<DispatcherQueue.Task, DispatcherQueue> tasks, DispatcherQueue notifyQueue, DispatcherQueue.Task notifyTask) {
-            this.bundles = bundles;
+        public final Map<Task, DispatchQueue> tasks;
+        public final DispatchQueue notifyQueue;
+        public final Task notifyTask;
+        public Transaction(Map<Task, DispatchQueue> tasks, DispatchQueue notifyQueue, Task notifyTask) {
             this.tasks = tasks;
             this.notifyQueue  = notifyQueue;
             this.notifyTask = notifyTask;
         }
 
         public static final class Builder {
-            public final Map<DispatcherQueue.Task, Bundle> bundles = new HashMap<>();
-            private final Map<DispatcherQueue.Task, DispatcherQueue> tasks = new HashMap<>();
-            private DispatcherQueue notifyQueue;
-            private DispatcherQueue.Task notifyTask;
+            private final Map<Task, DispatchQueue> tasks = new HashMap<>();
+            private DispatchQueue notifyQueue;
+            private Task notifyTask;
 
-            public Builder append(DispatcherQueue queue, Bundle bundle, DispatcherQueue.Task task) {
+            public Builder append(DispatchQueue queue, Task task) {
                 tasks.put(task, queue);
-                if(bundle != null) {
-                    bundles.put(task, bundle);
-                }
                 return this;
             }
 
-            public Builder remove(DispatcherQueue.Task task) {
+            public Builder remove(Task task) {
                 tasks.remove(task);
-
                 return this;
             }
 
-            public Builder notifyTask(DispatcherQueue queue, DispatcherQueue.Task task) {
+            public Builder notifyTask(DispatchQueue queue, Task task) {
                 notifyQueue = queue;
                 this.notifyTask = task;
                 return this;
             }
 
             public Transaction build() {
-                return new Transaction(bundles, tasks, notifyQueue, notifyTask);
+                return new Transaction(tasks, notifyQueue, notifyTask);
             }
 
         }

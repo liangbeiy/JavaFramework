@@ -5,9 +5,7 @@
 
 package com.cxuy.framework.coroutine.task;
 
-import com.cxuy.framework.coroutine.DispatchContext;
-
 @FunctionalInterface
-public interface Task {
-    void run(DispatchContext context);
+public interface Task extends Runnable {
+
 }
