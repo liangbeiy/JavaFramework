@@ -39,4 +39,7 @@ bin/
 .vscode/
 
 ### Mac OS ###
-.DS_Store
+.DS_Store# Harness 工作区（跨会话状态，不提交）
+.knowledge-work/
+# Harness 工作区（跨会话状态，不提交）
+.knowledge-work/

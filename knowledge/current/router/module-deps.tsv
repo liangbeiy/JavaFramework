@@ -1,0 +1,52 @@
+FromModule	ToModule	Type	Evidence
+Main.java	framework/context	src	import com.cxuy.framework.context
+Main.java	framework/eventbus	src	import com.cxuy.framework.eventbus
+Main.java	framework/eventbus	src	import com.cxuy.framework.eventbus.annotate
+Main.java	framework/eventbus	src	import com.cxuy.framework.eventbus.cross
+Main.java	framework/io	src	import com.cxuy.framework.io.file
+Main.java	framework/util	src	import com.cxuy.framework.util
+framework/context	framework/annotation	src	import com.cxuy.framework.annotation
+framework/context	framework/constant	src	import com.cxuy.framework.constant
+framework/context	framework/lifecycle	src	import com.cxuy.framework.lifecycle
+framework/context	framework/provider	src	import com.cxuy.framework.provider
+framework/context	framework/util	src	import com.cxuy.framework.util
+framework/coroutine	framework/annotation	src	import com.cxuy.framework.annotation
+framework/coroutine	framework/util	src	import com.cxuy.framework.util
+framework/eventbus	framework/annotation	src	import com.cxuy.framework.annotation
+framework/eventbus	framework/constant	src	import com.cxuy.framework.constant
+framework/eventbus	framework/coroutine	src	import com.cxuy.framework.coroutine
+framework/eventbus	framework/coroutine	src	import com.cxuy.framework.coroutine.queue
+framework/eventbus	framework/coroutine	src	import com.cxuy.framework.coroutine.task
+framework/eventbus	framework/lifecycle	src	import com.cxuy.framework.lifecycle
+framework/eventbus	framework/util	src	import com.cxuy.framework.util
+framework/io	framework/annotation	src	import com.cxuy.framework.annotation
+framework/io	framework/context	src	import com.cxuy.framework.context
+framework/io	framework/coroutine	src	import com.cxuy.framework.coroutine
+framework/io	framework/coroutine	src	import com.cxuy.framework.coroutine.DispatchQueue
+framework/io	framework/coroutine	src	import com.cxuy.framework.coroutine.queue
+framework/io	framework/coroutine	src	import com.cxuy.framework.coroutine.task
+framework/io	framework/lifecycle	src	import com.cxuy.framework.lifecycle
+framework/io	framework/provider	src	import com.cxuy.framework.provider
+framework/io	framework/util	src	import com.cxuy.framework.util
+framework/lifecycle	framework/util	src	import com.cxuy.framework.util
+framework/livedata	framework/coroutine	src	import com.cxuy.framework.coroutine.queue
+framework/livedata	framework/lifecycle	src	import com.cxuy.framework.lifecycle
+framework/provider	framework/util	src	import com.cxuy.framework.util
+framework/struct	framework/annotation	src	import com.cxuy.framework.annotation
+framework/util	framework/annotation	src	import com.cxuy.framework.annotation
+framework/util	framework/coroutine	src	import com.cxuy.framework.coroutine.queue
+framework/util	framework/io	src	import com.cxuy.framework.io.file
+handler	framework/eventbus	src	handler依赖eventbus
+handler	server	src	import com.cxuy.server.annotation
+http	framework/annotation	src	import com.cxuy.framework.annotation
+http	framework/constant	src	import com.cxuy.framework.constant
+http	framework/context	src	http依赖context
+http	framework/coroutine	src	import com.cxuy.framework.coroutine.queue
+http	framework/util	src	import com.cxuy.framework.util
+server	framework/annotation	src	import com.cxuy.framework.annotation
+server	framework/constant	src	import com.cxuy.framework.constant
+server	framework/context	src	import com.cxuy.framework.context
+server	framework/eventbus	src	server依赖eventbus
+server	framework/lifecycle	src	import com.cxuy.framework.lifecycle
+server	framework/util	src	import com.cxuy.framework.util
+server	http	src	server依赖http

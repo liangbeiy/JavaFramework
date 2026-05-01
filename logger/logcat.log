@@ -1,0 +1,688 @@
+2025-10-18T17:57:51Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-18T17:57:51Z	W	MAIN	release lock
+2025-10-18T18:00:30Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-18T18:00:30Z	W	MAIN	release lock
+2025-10-18T18:00:34Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-18T18:00:34Z	W	MAIN	release lock
+2025-10-25T23:07:11Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-25T23:07:11Z	W	MAIN	release lock
+2025-10-25T23:07:27Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-25T23:07:27Z	W	MAIN	release lock
+2025-10-25T23:07:32Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-25T23:07:32Z	W	MAIN	release lock
+2025-10-25T23:08:47Z	D	MAIN	process main
+2025-10-25T23:08:54Z	D	MAIN	process pmain
+2025-10-25T23:08:57Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-25T23:08:57Z	W	MAIN	release lock
+2025-10-25T23:09:04Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-25T23:09:04Z	W	MAIN	release lock
+2025-10-25T23:09:16Z	D	MAIN	process main
+2025-10-25T23:09:25Z	D	MAIN	process pmain
+2025-10-25T23:09:36Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-25T23:09:36Z	W	MAIN	release lock
+2025-10-25T23:09:45Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-25T23:09:45Z	W	MAIN	release lock
+2025-10-25T23:11:11Z	D	MAIN	process main
+2025-10-25T23:11:21Z	D	MAIN	process pmain
+2025-10-25T23:11:31Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-25T23:11:31Z	W	LockManager	register watch service is failure, check!!!
+2025-10-25T23:11:51Z	W	MAIN	release lock
+2025-10-25T23:13:54Z	D	MAIN	process main
+2025-10-25T23:14:06Z	D	MAIN	process pmain
+2025-10-25T23:14:14Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-25T23:14:16Z	W	LockManager	register watch service is failure, check!!!
+2025-10-25T23:14:34Z	W	MAIN	release lock
+2025-10-25T23:15:32Z	D	MAIN	process main
+2025-10-25T23:15:42Z	D	MAIN	process pmain
+2025-10-25T23:15:52Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-25T23:15:57Z	W	LockManager	register watch service is failure, check!!!
+2025-10-25T23:16:12Z	W	MAIN	release lock
+2025-10-25T23:17:48Z	D	MAIN	process main
+2025-10-25T23:17:56Z	D	MAIN	process pmain
+2025-10-25T23:18:06Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-25T23:18:26Z	W	MAIN	release lock
+2025-10-25T23:19:00Z	D	MAIN	process main
+2025-10-25T23:19:38Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-25T23:19:58Z	W	MAIN	release lock
+2025-10-25T23:19:46Z	D	MAIN	process pmain
+2025-10-25T23:20:13Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-25T23:20:33Z	W	MAIN	release lock
+2025-10-25T23:24:29Z	D	MAIN	process main
+2025-10-25T23:24:38Z	D	MAIN	process pmain
+2025-10-25T23:24:48Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-25T23:24:49Z	D	MAIN	ALL TASK IS FINISHED
+2025-10-25T23:25:08Z	W	MAIN	release lock
+2025-10-25T23:25:08Z	D	MAIN	ALL TASK IS FINISHED
+2025-10-25T23:29:21Z	D	MAIN	process main
+2025-10-25T23:29:30Z	D	MAIN	process pmain
+2025-10-25T23:29:40Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-25T23:29:41Z	D	MAIN	ALL TASK IS FINISHED
+2025-10-25T23:30:00Z	W	MAIN	release lock
+2025-10-25T23:30:00Z	D	MAIN	ALL TASK IS FINISHED
+2025-10-25T23:30:33Z	D	MAIN	process main
+2025-10-25T23:30:41Z	D	MAIN	process pmain
+2025-10-25T23:30:51Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-25T23:30:53Z	D	MAIN	ALL TASK IS FINISHED
+2025-10-25T23:31:11Z	W	MAIN	release lock
+2025-10-25T23:31:11Z	D	MAIN	ALL TASK IS FINISHED
+2025-10-25T23:36:46Z	D	MAIN	process main
+2025-10-25T23:36:55Z	D	MAIN	process pmain
+2025-10-25T23:37:05Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-25T23:37:07Z	D	MAIN	ALL TASK IS FINISHED
+2025-10-25T23:37:25Z	W	MAIN	release lock
+2025-10-25T23:37:25Z	D	MAIN	ALL TASK IS FINISHED
+2025-10-25T23:38:46Z	D	MAIN	process main
+2025-10-25T23:38:55Z	D	MAIN	process pmain
+2025-10-25T23:39:05Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-25T23:39:06Z	D	MAIN	ALL TASK IS FINISHED
+2025-10-25T23:39:25Z	W	MAIN	release lock
+2025-10-25T23:39:25Z	D	MAIN	ALL TASK IS FINISHED
+2025-10-26T23:40:25Z	D	MAIN	process main
+2025-10-26T23:40:34Z	D	MAIN	process pmain
+2025-10-26T23:40:44Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-26T23:40:45Z	D	MAIN	ALL TASK IS FINISHED
+2025-10-26T23:41:04Z	W	MAIN	release lock
+2025-10-26T23:41:04Z	D	MAIN	ALL TASK IS FINISHED
+2025-10-26T23:42:56Z	D	MAIN	process main
+2025-10-26T23:43:05Z	D	MAIN	process pmain
+2025-10-26T23:43:15Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-26T23:43:16Z	D	MAIN	ALL TASK IS FINISHED
+2025-10-26T23:43:35Z	W	MAIN	release lock
+2025-10-26T23:43:35Z	D	MAIN	ALL TASK IS FINISHED
+2025-10-26T23:45:46Z	D	MAIN	process main
+2025-10-26T23:45:55Z	D	MAIN	process pmain
+2025-10-26T23:46:05Z	W	MAIN	acquire lock successful, thread add=Thread[#3,main,5,main]
+2025-10-26T23:46:06Z	D	MAIN	ALL TASK IS FINISHED
+2025-10-26T23:46:25Z	W	MAIN	release lock
+2025-10-26T23:46:25Z	D	MAIN	ALL TASK IS FINISHED
+2025-10-26T23:46:25Z	E	LockManager	watch thread has been interrupted
+					java.nio.file.ClosedWatchServiceException: null
+					    at java.base/sun.nio.fs.AbstractWatchService.checkOpen(AbstractWatchService.java:80)
+					    at java.base/sun.nio.fs.AbstractWatchService.checkKey(AbstractWatchService.java:92)
+					    at java.base/sun.nio.fs.AbstractWatchService.poll(AbstractWatchService.java:109)
+					    at com.cxuy.framework.io.file.multi.LockManager.watch(LockManager.java:192)
+					    at java.base/java.lang.Thread.run(Thread.java:1447)
+
+2025-10-26T23:46:25Z	D	LockManager	watching task is finished
+2025-11-09T00:30:05Z	D	DefaultLifecycleOwner	state has been changed, current=-1next state=0
+2025-11-09T00:30:05Z	D	DefaultLifecycleOwner	state has been changed, current=0next state=3
+2025-11-09T00:30:05Z	D	InterProcessServer	socket port=9229
+2025-11-09T00:30:05Z	D	DefaultLifecycleOwner	state has been changed, current=3next state=4
+2025-11-09T00:35:27Z	D	DefaultLifecycleOwner	state has been changed, current=-1next state=0
+2025-11-09T00:35:27Z	D	DefaultLifecycleOwner	state has been changed, current=0next state=3
+2025-11-09T00:35:27Z	E	InterProcessServer	an exception occurred while create server socket, e=
+					java.net.BindException: Address already in use
+					    at java.base/sun.nio.ch.Net.bind0(Native Method)
+					    at java.base/sun.nio.ch.Net.bind(Net.java:511)
+					    at java.base/sun.nio.ch.Net.bind(Net.java:500)
+					    at java.base/sun.nio.ch.NioSocketImpl.bind(NioSocketImpl.java:630)
+					    at java.base/java.net.ServerSocket.bind(ServerSocket.java:326)
+					    at java.base/java.net.ServerSocket.<init>(ServerSocket.java:222)
+					    at java.base/java.net.ServerSocket.<init>(ServerSocket.java:138)
+					    at com.cxuy.framework.eventbus.cross.InterProcessServer.lambda$start$0(InterProcessServer.java:36)
+					    at com.cxuy.framework.coroutine.queue.DispatcherQueue.handleTask(DispatchQueue.java:288)
+					    at com.cxuy.framework.coroutine.queue.DispatcherQueue$T.run(DispatchQueue.java:414)
+
+2025-11-09T00:35:27Z	D	DefaultLifecycleOwner	state has been changed, current=3next state=10
+2025-11-09T00:35:38Z	E	InterProcessEventBus	fail to connect inter process server
+					java.net.ConnectException: Connection refused
+					    at java.base/sun.nio.ch.Net.connect0(Native Method)
+					    at java.base/sun.nio.ch.Net.connect(Net.java:535)
+					    at java.base/sun.nio.ch.Net.connect(Net.java:524)
+					    at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:574)
+					    at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:282)
+					    at java.base/java.net.Socket.connect(Socket.java:665)
+					    at java.base/java.net.Socket.connect(Socket.java:603)
+					    at java.base/java.net.Socket.<init>(Socket.java:470)
+					    at java.base/java.net.Socket.<init>(Socket.java:276)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus.connect(InterProcessEventBus.java:153)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus.<init>(InterProcessEventBus.java:49)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus$HOLDER.<clinit>(InterProcessEventBus.java:29)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus.get(InterProcessEventBus.java:45)
+					    at com.cxuy.Main$TEST.<init>(Main.java:47)
+					    at com.cxuy.Main.runClient(Main.java:39)
+					    at com.cxuy.Main.main(Main.java:27)
+
+2025-11-09T00:36:17Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-09T00:36:17Z	D	InterProcessEventBus	inter process connected...
+2025-11-09T00:36:43Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-09T00:36:43Z	D	InterProcessEventBus	inter process connected...
+2025-11-09T00:38:01Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-09T00:38:01Z	D	InterProcessEventBus	inter process connected...
+2025-11-09T00:38:51Z	D	DefaultLifecycleOwner	state has been changed, current=-1next state=0
+2025-11-09T00:38:51Z	D	DefaultLifecycleOwner	state has been changed, current=0next state=3
+2025-11-09T00:38:51Z	D	InterProcessServer	socket port=9229
+2025-11-09T00:38:51Z	D	DefaultLifecycleOwner	state has been changed, current=3next state=4
+2025-11-09T00:39:08Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-09T00:39:08Z	D	InterProcessEventBus	inter process connected...
+2025-11-09T00:40:13Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-09T00:40:13Z	D	InterProcessEventBus	inter process connected...
+2025-11-09T00:42:37Z	D	DefaultLifecycleOwner	state has been changed, current=-1next state=0
+2025-11-09T00:42:37Z	D	DefaultLifecycleOwner	state has been changed, current=0next state=3
+2025-11-09T00:42:37Z	D	InterProcessServer	socket port=9229
+2025-11-09T00:42:37Z	D	DefaultLifecycleOwner	state has been changed, current=3next state=4
+2025-11-09T00:42:48Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-09T00:42:48Z	D	InterProcessEventBus	inter process connected...
+2025-11-09T00:43:05Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-09T00:43:05Z	D	InterProcessEventBus	inter process connected...
+2025-11-09T00:43:57Z	D	InterProcessClientHandler	received a message
+2025-11-09T00:43:58Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-09T00:43:58Z	D	InterProcessEventBus	inter process connected...
+2025-11-09T00:46:39Z	D	InterProcessEventBus	inter process connected...
+2025-11-09T00:50:27Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-09T00:50:40Z	D	InterProcessClientHandler	received a message
+2025-11-09T01:07:50Z	D	InterProcessEventBus	inter process connected...
+2025-11-09T01:08:01Z	D	InterProcessClientHandler	received a message
+2025-11-09T01:08:01Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-09T01:08:57Z	D	InterProcessEventBus	inter process connected...
+2025-11-09T01:09:27Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-09T01:09:27Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:10:49Z	D	DefaultLifecycleOwner	state has been changed, current=-1next state=0
+2025-11-15T16:10:49Z	D	DefaultLifecycleOwner	state has been changed, current=0next state=3
+2025-11-15T16:10:49Z	D	InterProcessServer	socket port=9229
+2025-11-15T16:10:49Z	D	DefaultLifecycleOwner	state has been changed, current=3next state=4
+2025-11-15T16:12:01Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:12:01Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:17:23Z	E	InterProcessEventBus	fail to connect inter process server
+					java.net.ConnectException: Connection refused
+					    at java.base/sun.nio.ch.Net.connect0(Native Method)
+					    at java.base/sun.nio.ch.Net.connect(Net.java:535)
+					    at java.base/sun.nio.ch.Net.connect(Net.java:524)
+					    at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:574)
+					    at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:282)
+					    at java.base/java.net.Socket.connect(Socket.java:665)
+					    at java.base/java.net.Socket.connect(Socket.java:603)
+					    at java.base/java.net.Socket.<init>(Socket.java:470)
+					    at java.base/java.net.Socket.<init>(Socket.java:276)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus.connect(InterProcessEventBus.java:153)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus.<init>(InterProcessEventBus.java:49)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus$HOLDER.<clinit>(InterProcessEventBus.java:29)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus.get(InterProcessEventBus.java:45)
+					    at com.cxuy.Main$TEST.<init>(Main.java:47)
+					    at com.cxuy.Main.runClient(Main.java:39)
+					    at com.cxuy.Main.main(Main.java:27)
+
+2025-11-15T16:17:39Z	D	DefaultLifecycleOwner	state has been changed, current=-1next state=0
+2025-11-15T16:17:39Z	D	DefaultLifecycleOwner	state has been changed, current=0next state=3
+2025-11-15T16:17:39Z	D	InterProcessServer	socket port=9229
+2025-11-15T16:17:39Z	D	DefaultLifecycleOwner	state has been changed, current=3next state=4
+2025-11-15T16:17:51Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:17:51Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:17:57Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:18:20Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:22:24Z	D	DefaultLifecycleOwner	state has been changed, current=-1next state=0
+2025-11-15T16:22:24Z	D	DefaultLifecycleOwner	state has been changed, current=0next state=3
+2025-11-15T16:22:24Z	D	InterProcessServer	socket port=9229
+2025-11-15T16:22:24Z	D	DefaultLifecycleOwner	state has been changed, current=3next state=4
+2025-11-15T16:22:39Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:22:39Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:22:46Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:22:46Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:25:29Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:25:29Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:25:34Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:25:34Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:27:03Z	E	InterProcessEventBus	fail to connect inter process server
+					java.net.ConnectException: Connection refused
+					    at java.base/sun.nio.ch.Net.connect0(Native Method)
+					    at java.base/sun.nio.ch.Net.connect(Net.java:535)
+					    at java.base/sun.nio.ch.Net.connect(Net.java:524)
+					    at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:574)
+					    at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:282)
+					    at java.base/java.net.Socket.connect(Socket.java:665)
+					    at java.base/java.net.Socket.connect(Socket.java:603)
+					    at java.base/java.net.Socket.<init>(Socket.java:470)
+					    at java.base/java.net.Socket.<init>(Socket.java:276)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus.connect(InterProcessEventBus.java:153)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus.<init>(InterProcessEventBus.java:49)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus$HOLDER.<clinit>(InterProcessEventBus.java:29)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus.get(InterProcessEventBus.java:45)
+					    at com.cxuy.Main$TEST.<init>(Main.java:47)
+					    at com.cxuy.Main.runClient(Main.java:39)
+					    at com.cxuy.Main.main(Main.java:27)
+
+2025-11-15T16:27:06Z	E	InterProcessEventBus	fail to connect inter process server
+					java.net.ConnectException: Connection refused
+					    at java.base/sun.nio.ch.Net.connect0(Native Method)
+					    at java.base/sun.nio.ch.Net.connect(Net.java:535)
+					    at java.base/sun.nio.ch.Net.connect(Net.java:524)
+					    at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:574)
+					    at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:282)
+					    at java.base/java.net.Socket.connect(Socket.java:665)
+					    at java.base/java.net.Socket.connect(Socket.java:603)
+					    at java.base/java.net.Socket.<init>(Socket.java:470)
+					    at java.base/java.net.Socket.<init>(Socket.java:276)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus.connect(InterProcessEventBus.java:153)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus.<init>(InterProcessEventBus.java:49)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus$HOLDER.<clinit>(InterProcessEventBus.java:29)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus.get(InterProcessEventBus.java:45)
+					    at com.cxuy.Main$TEST.<init>(Main.java:47)
+					    at com.cxuy.Main.runClient(Main.java:39)
+					    at com.cxuy.Main.main(Main.java:27)
+
+2025-11-15T16:27:15Z	D	DefaultLifecycleOwner	state has been changed, current=-1next state=0
+2025-11-15T16:27:15Z	D	DefaultLifecycleOwner	state has been changed, current=0next state=3
+2025-11-15T16:27:15Z	D	InterProcessServer	socket port=9229
+2025-11-15T16:27:15Z	D	DefaultLifecycleOwner	state has been changed, current=3next state=4
+2025-11-15T16:27:21Z	D	DefaultLifecycleOwner	state has been changed, current=-1next state=0
+2025-11-15T16:27:21Z	D	DefaultLifecycleOwner	state has been changed, current=0next state=3
+2025-11-15T16:27:21Z	E	InterProcessServer	an exception occurred while create server socket, e=
+					java.net.BindException: Address already in use
+					    at java.base/sun.nio.ch.Net.bind0(Native Method)
+					    at java.base/sun.nio.ch.Net.bind(Net.java:511)
+					    at java.base/sun.nio.ch.Net.bind(Net.java:500)
+					    at java.base/sun.nio.ch.NioSocketImpl.bind(NioSocketImpl.java:630)
+					    at java.base/java.net.ServerSocket.bind(ServerSocket.java:326)
+					    at java.base/java.net.ServerSocket.<init>(ServerSocket.java:222)
+					    at java.base/java.net.ServerSocket.<init>(ServerSocket.java:138)
+					    at com.cxuy.framework.eventbus.cross.InterProcessServer.lambda$start$0(InterProcessServer.java:36)
+					    at com.cxuy.framework.coroutine.queue.DispatcherQueue.handleTask(DispatchQueue.java:288)
+					    at com.cxuy.framework.coroutine.queue.DispatcherQueue$T.run(DispatchQueue.java:414)
+
+2025-11-15T16:27:21Z	D	DefaultLifecycleOwner	state has been changed, current=3next state=10
+2025-11-15T16:27:31Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:27:31Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:27:34Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:27:34Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:28:53Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:28:53Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:28:53Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:28:53Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:29:06Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:29:06Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:29:06Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:29:06Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:29:49Z	D	InterProcessEventBus	a message has been received...
+2025-11-15T16:30:45Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:30:45Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:30:49Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:30:49Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:30:53Z	D	InterProcessEventBus	a message has been received...
+2025-11-15T16:31:50Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:31:50Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:31:53Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:32:07Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:32:54Z	D	InterProcessEventBus	a message has been received...
+2025-11-15T16:33:29Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:33:29Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:33:29Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:33:31Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:33:34Z	D	InterProcessEventBus	a message has been received...
+2025-11-15T16:39:17Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:39:17Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:39:17Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:39:21Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:39:24Z	D	InterProcessEventBus	a message has been received...
+2025-11-15T16:40:09Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:40:09Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:40:09Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:40:09Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:40:16Z	D	InterProcessEventBus	a message has been received...
+2025-11-15T16:42:02Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:42:02Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:42:02Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:42:02Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:42:28Z	D	InterProcessEventBus	a message has been received...
+2025-11-15T16:42:56Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:42:56Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:42:56Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:42:56Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:43:12Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:43:12Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:43:12Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:43:12Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:43:12Z	D	InterProcessEventBus	a message has been received...
+2025-11-15T16:44:04Z	D	MAIN	receive: model={"message":"hello message"}
+2025-11-15T16:44:09Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:44:09Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:44:09Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:44:09Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:44:09Z	D	InterProcessEventBus	a message has been received...
+2025-11-15T16:44:13Z	D	MAIN	receive: model={"message":"hello message"}
+2025-11-15T16:44:33Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:44:33Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:44:34Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:44:34Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:44:46Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:44:46Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:44:46Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:44:46Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:44:46Z	D	InterProcessEventBus	a message has been received...
+2025-11-15T16:44:46Z	D	MAIN	receive: model={"message":"hello message"}
+2025-11-15T16:45:50Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:45:56Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:45:56Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:45:56Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:46:16Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:46:19Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:46:19Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:46:20Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:46:20Z	D	InterProcessEventBus	a message has been received...
+2025-11-15T16:46:20Z	D	MAIN	receive: model={"message":"hello message"}
+2025-11-15T16:47:25Z	D	DefaultLifecycleOwner	state has been changed, current=-1next state=0
+2025-11-15T16:47:25Z	D	DefaultLifecycleOwner	state has been changed, current=0next state=3
+2025-11-15T16:47:25Z	D	InterProcessServer	socket port=9229
+2025-11-15T16:47:25Z	D	DefaultLifecycleOwner	state has been changed, current=3next state=4
+2025-11-15T16:47:48Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:47:48Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:47:48Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:47:48Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:47:48Z	D	InterProcessEventBus	a message has been received...
+2025-11-15T16:47:48Z	D	MAIN	receive: model={"message":"hello message"}
+2025-11-15T16:48:02Z	D	InterProcessClientHandler	a client has disconnect inter-process bus, recycle the resources. 
+2025-11-15T16:48:02Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:48:02Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:48:02Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:48:02Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:48:02Z	D	InterProcessEventBus	a message has been received...
+2025-11-15T16:48:02Z	D	MAIN	receive: model={"message":"hello message"}
+2025-11-15T16:50:36Z	D	InterProcessClientHandler	a client has disconnect inter-process bus, recycle the resources. 
+2025-11-15T16:50:36Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:50:36Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:50:36Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:50:36Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:50:36Z	D	InterProcessEventBus	a message has been received...
+2025-11-15T16:50:36Z	D	MAIN	receive: model={"message":"hello message"}
+2025-11-15T16:50:50Z	D	DefaultLifecycleOwner	state has been changed, current=-1next state=0
+2025-11-15T16:50:50Z	D	DefaultLifecycleOwner	state has been changed, current=0next state=3
+2025-11-15T16:50:50Z	D	InterProcessServer	socket port=9229
+2025-11-15T16:50:50Z	D	DefaultLifecycleOwner	state has been changed, current=3next state=4
+2025-11-15T16:50:56Z	D	InterProcessServer	socket has been accepted and handle
+2025-11-15T16:50:56Z	D	InterProcessEventBus	inter process connected...
+2025-11-15T16:50:57Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:50:57Z	D	InterProcessClientHandler	handle a message, operation=register
+2025-11-15T16:50:57Z	D	InterProcessClientHandler	received a message
+2025-11-15T16:50:57Z	D	InterProcessClientHandler	handle a message, operation=post
+2025-11-15T16:50:57Z	D	InterProcessEventBus	a message has been received...
+2025-11-15T16:50:57Z	D	MAIN	receive: model={"message":"hello message"}
+2025-11-15T16:51:57Z	D	DefaultLifecycleOwner	state has been changed, current=ANYnext state=INITED
+2025-11-15T16:51:57Z	D	DefaultLifecycleOwner	state has been changed, current=INITEDnext state=WILL_START
+2025-11-15T16:51:57Z	D	InterProcessServer	socket port=9229
+2025-11-15T16:51:57Z	D	DefaultLifecycleOwner	state has been changed, current=WILL_STARTnext state=DID_START
+2026-01-18T00:35:18Z	D	DefaultLifecycleOwner	state has been changed, current=ANYnext state=INITED
+2026-01-18T00:35:18Z	D	DefaultLifecycleOwner	state has been changed, current=INITEDnext state=WILL_START
+2026-01-18T00:35:18Z	D	InterProcessServer	socket port=5729
+2026-01-18T00:35:18Z	D	DefaultLifecycleOwner	state has been changed, current=WILL_STARTnext state=DID_START
+2026-01-18T00:35:34Z	D	InterProcessServer	socket has been accepted and handle
+2026-01-18T00:35:34Z	D	InterProcessEventBus	inter process connected...
+2026-01-18T00:35:39Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:35:49Z	I	InterProcessClientHandler	heartbeat check failure, timeout
+2026-01-18T00:37:43Z	E	InterProcessEventBus	fail to connect inter process server
+					java.net.ConnectException: Connection refused
+					    at java.base/sun.nio.ch.Net.connect0(Native Method)
+					    at java.base/sun.nio.ch.Net.connect(Net.java:535)
+					    at java.base/sun.nio.ch.Net.connect(Net.java:524)
+					    at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:574)
+					    at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:282)
+					    at java.base/java.net.Socket.connect(Socket.java:665)
+					    at java.base/java.net.Socket.connect(Socket.java:603)
+					    at java.base/java.net.Socket.<init>(Socket.java:470)
+					    at java.base/java.net.Socket.<init>(Socket.java:276)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus.connect(InterProcessEventBus.java:208)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus.<init>(InterProcessEventBus.java:57)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus$HOLDER.<clinit>(InterProcessEventBus.java:34)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus.get(InterProcessEventBus.java:53)
+					    at com.cxuy.Main.runAsClient(Main.java:38)
+					    at com.cxuy.Main.run(Main.java:28)
+					    at com.cxuy.Main.main(Main.java:22)
+
+2026-01-18T00:37:48Z	E	InterProcessEventBus	fail to connect inter process server
+					java.net.ConnectException: Connection refused
+					    at java.base/sun.nio.ch.Net.connect0(Native Method)
+					    at java.base/sun.nio.ch.Net.connect(Net.java:535)
+					    at java.base/sun.nio.ch.Net.connect(Net.java:524)
+					    at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:574)
+					    at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:282)
+					    at java.base/java.net.Socket.connect(Socket.java:665)
+					    at java.base/java.net.Socket.connect(Socket.java:603)
+					    at java.base/java.net.Socket.<init>(Socket.java:470)
+					    at java.base/java.net.Socket.<init>(Socket.java:276)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus.connect(InterProcessEventBus.java:208)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus.<init>(InterProcessEventBus.java:57)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus$HOLDER.<clinit>(InterProcessEventBus.java:34)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus.get(InterProcessEventBus.java:53)
+					    at com.cxuy.Main.runAsClient(Main.java:38)
+					    at com.cxuy.Main.run(Main.java:28)
+					    at com.cxuy.Main.main(Main.java:22)
+
+2026-01-18T00:38:17Z	D	DefaultLifecycleOwner	state has been changed, current=ANYnext state=INITED
+2026-01-18T00:38:17Z	D	DefaultLifecycleOwner	state has been changed, current=INITEDnext state=WILL_START
+2026-01-18T00:38:17Z	D	InterProcessServer	socket port=5729
+2026-01-18T00:38:17Z	D	DefaultLifecycleOwner	state has been changed, current=WILL_STARTnext state=DID_START
+2026-01-18T00:38:32Z	D	InterProcessServer	socket has been accepted and handle
+2026-01-18T00:38:32Z	D	InterProcessEventBus	inter process connected...
+2026-01-18T00:38:37Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:38:37Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:38:47Z	I	InterProcessClientHandler	heartbeat check failure, timeout
+2026-01-18T00:42:05Z	D	DefaultLifecycleOwner	state has been changed, current=ANYnext state=INITED
+2026-01-18T00:42:05Z	D	DefaultLifecycleOwner	state has been changed, current=INITEDnext state=WILL_START
+2026-01-18T00:42:05Z	D	InterProcessServer	socket port=5729
+2026-01-18T00:42:05Z	D	DefaultLifecycleOwner	state has been changed, current=WILL_STARTnext state=DID_START
+2026-01-18T00:42:18Z	D	InterProcessServer	socket has been accepted and handle
+2026-01-18T00:42:18Z	D	InterProcessEventBus	inter process connected...
+2026-01-18T00:42:23Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:42:23Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:42:33Z	I	InterProcessClientHandler	heartbeat check failure, timeout
+2026-01-18T00:43:28Z	D	DefaultLifecycleOwner	state has been changed, current=ANYnext state=INITED
+2026-01-18T00:43:28Z	D	DefaultLifecycleOwner	state has been changed, current=INITEDnext state=WILL_START
+2026-01-18T00:43:28Z	D	InterProcessServer	socket port=5729
+2026-01-18T00:43:28Z	D	DefaultLifecycleOwner	state has been changed, current=WILL_STARTnext state=DID_START
+2026-01-18T00:43:38Z	D	InterProcessServer	socket has been accepted and handle
+2026-01-18T00:43:38Z	D	InterProcessEventBus	inter process connected...
+2026-01-18T00:43:45Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:43:45Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:43:45Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:43:45Z	D	InterProcessClientHandler	handle a message, operation=register
+2026-01-18T00:43:45Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:43:45Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:43:50Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:43:50Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:43:50Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:43:50Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:43:55Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:43:55Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:43:55Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:43:55Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:44:00Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:44:00Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:44:00Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:44:00Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:44:05Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:44:05Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:44:05Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:44:05Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:44:10Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:44:10Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:44:10Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:44:10Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:44:15Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:44:15Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:44:15Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:44:15Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:44:20Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:44:20Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:44:20Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:44:20Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:44:25Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:44:25Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:44:25Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:44:25Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:44:30Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:44:30Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:44:30Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:44:30Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:44:35Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:44:35Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:44:35Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:44:35Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:44:40Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:44:40Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:44:40Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:44:40Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:44:45Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:44:45Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:44:45Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:44:45Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:44:50Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:44:50Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:44:50Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:44:50Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:44:55Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:44:55Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:44:55Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:44:55Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:45:00Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:45:00Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:45:00Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:45:00Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:45:05Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:45:05Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:45:05Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:45:05Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:45:10Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:45:10Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:45:10Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:45:10Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:45:15Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:45:15Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:45:15Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:45:15Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:45:20Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:45:20Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:45:20Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:45:20Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:45:25Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:45:25Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:45:25Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:45:25Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:45:30Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:45:30Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:45:30Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:45:30Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:45:35Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:45:35Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:45:35Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:45:35Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:45:40Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:45:40Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:45:40Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:45:40Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:45:45Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:45:45Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:45:45Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:45:45Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:45:50Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:45:50Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:45:50Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:45:50Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:45:55Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:45:55Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:45:55Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:45:55Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:46:00Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:46:00Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:46:00Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:46:00Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:46:05Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:46:05Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:46:05Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:46:05Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:46:10Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:46:10Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:46:10Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:46:10Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:46:15Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:46:15Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:46:15Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:46:15Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:46:20Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:46:20Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:46:20Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:46:20Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:46:25Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:46:25Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:46:25Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:46:25Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:46:30Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:46:30Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:46:30Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:46:30Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:46:35Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:46:35Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:46:35Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:46:35Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:46:40Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:46:40Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:46:40Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:46:40Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:46:45Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:46:45Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:46:45Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:46:45Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:46:52Z	E	InterProcessEventBus	fail to connect inter process server
+					java.net.ConnectException: Connection refused
+					    at java.base/sun.nio.ch.Net.connect0(Native Method)
+					    at java.base/sun.nio.ch.Net.connect(Net.java:535)
+					    at java.base/sun.nio.ch.Net.connect(Net.java:524)
+					    at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:574)
+					    at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:282)
+					    at java.base/java.net.Socket.connect(Socket.java:665)
+					    at java.base/java.net.Socket.connect(Socket.java:603)
+					    at java.base/java.net.Socket.<init>(Socket.java:470)
+					    at java.base/java.net.Socket.<init>(Socket.java:276)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus.connect(InterProcessEventBus.java:208)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus.<init>(InterProcessEventBus.java:57)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus$HOLDER.<clinit>(InterProcessEventBus.java:34)
+					    at com.cxuy.framework.eventbus.InterProcessEventBus.get(InterProcessEventBus.java:53)
+					    at com.cxuy.Main.runAsClient(Main.java:38)
+					    at com.cxuy.Main.run(Main.java:28)
+					    at com.cxuy.Main.main(Main.java:22)
+
+2026-01-18T00:47:03Z	D	DefaultLifecycleOwner	state has been changed, current=ANYnext state=INITED
+2026-01-18T00:47:03Z	D	DefaultLifecycleOwner	state has been changed, current=INITEDnext state=WILL_START
+2026-01-18T00:47:03Z	D	InterProcessServer	socket port=5729
+2026-01-18T00:47:03Z	D	DefaultLifecycleOwner	state has been changed, current=WILL_STARTnext state=DID_START
+2026-01-18T00:47:03Z	D	InterProcessServer	socket has been accepted and handle
+2026-01-18T00:47:03Z	D	InterProcessEventBus	inter process connected...
+2026-01-18T00:47:03Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:47:03Z	D	InterProcessClientHandler	handle a message, operation=register
+2026-01-18T00:47:15Z	D	DefaultLifecycleOwner	state has been changed, current=ANYnext state=INITED
+2026-01-18T00:47:15Z	D	DefaultLifecycleOwner	state has been changed, current=INITEDnext state=WILL_START
+2026-01-18T00:47:15Z	D	InterProcessServer	socket port=5729
+2026-01-18T00:47:15Z	D	DefaultLifecycleOwner	state has been changed, current=WILL_STARTnext state=DID_START
+2026-01-18T00:47:23Z	D	InterProcessServer	socket has been accepted and handle
+2026-01-18T00:47:23Z	D	InterProcessEventBus	inter process connected...
+2026-01-18T00:47:23Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:47:23Z	D	InterProcessClientHandler	handle a message, operation=register
+2026-01-18T00:48:23Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:48:23Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:48:23Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:48:23Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:48:38Z	D	InterProcessClientHandler	a client has disconnect inter-process bus, recycle the resources. 
+2026-01-18T00:51:23Z	I	InterProcessClientHandler	heartbeat check failure, timeout
+2026-01-18T00:52:54Z	D	InterProcessServer	socket has been accepted and handle
+2026-01-18T00:52:54Z	D	InterProcessEventBus	inter process connected...
+2026-01-18T00:52:54Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:52:54Z	D	InterProcessClientHandler	handle a message, operation=register
+2026-01-18T00:53:54Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:53:54Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:53:54Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:53:54Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:53:54Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:53:54Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_check
+2026-01-18T00:53:54Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:53:54Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_RESPONSE
+2026-01-18T00:54:44Z	D	InterProcessClientHandler	a client has disconnect inter-process bus, recycle the resources. 
+2026-01-18T00:54:44Z	D	InterProcessServer	socket has been accepted and handle
+2026-01-18T00:54:44Z	D	InterProcessEventBus	inter process connected...
+2026-01-18T00:54:44Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:54:44Z	D	InterProcessClientHandler	handle a message, operation=register
+2026-01-18T00:55:44Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:55:44Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_CHECK
+2026-01-18T00:55:44Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:55:44Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_response
+2026-01-18T00:55:46Z	D	InterProcessClientHandler	received a message
+2026-01-18T00:55:46Z	D	InterProcessClientHandler	handle a message, operation=heartbeat_check
+2026-01-18T00:55:46Z	D	InterProcessEventBus	a message has been received...
+2026-01-18T00:55:46Z	D	InterProcessEventBus	event bus: current operation=HEARTBEAT_RESPONSE
+2026-01-18T00:56:22Z	D	InterProcessClientHandler	a client has disconnect inter-process bus, recycle the resources. 
