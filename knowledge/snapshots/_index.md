@@ -9,6 +9,7 @@ Each snapshot is a full copy of the `current/` directory at a point in time.
 
 | Version | Date | Trigger | Description |
 |---------|------|---------|-------------|
+| 2026-05-25_v1.0 | 2026-05-25 | merge | Pre-merge snapshot for 4 deltas (coroutine-refactor, rename-textutil-to-textutils, refactor-file-io, misc-fixes) |
 | (none yet) | | | |
 
 ## Creating Snapshots

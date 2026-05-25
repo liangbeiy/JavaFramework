@@ -8,14 +8,6 @@
 package com.cxuy.framework.coroutine;
 
 public interface DispatchQueue {
-    String DEFAULT_DISPATCHER_QUEUE = "DispatchQueue#standard";
-    String DEFAULT_DISPATCHER_IO = "DispatchQueue#IO";
-    
-    // 预定义队列实例
-    OnceDispatcherQueue once = OnceDispatcherQueue.get();
-    DispatchQueue standard = new DispatcherQueue(DEFAULT_DISPATCHER_QUEUE);
-    DispatchQueue io = new DispatcherQueue(DEFAULT_DISPATCHER_IO, true);  // 协程模式
-    
     // 同步执行
     void sync(@NonNull Task task);
     void sync(long delay, @NonNull Task task);
@@ -45,6 +37,41 @@ public interface DispatchQueue {
     }
 }
 ```
+
+> **注意**: `standard`/`io`/`once` 静态字段已从 DispatchQueue 接口移至 `Coroutines` 类。
+
+### Coroutines 类
+
+```java
+package com.cxuy.framework.coroutine;
+
+public final class Coroutines {
+    // 全局调度器实例
+    public static final DispatchQueue standard;  // 标准调度队列，单线程执行
+    public static final DispatchQueue io;        // IO 调度队列，协程模式，线程池并发
+    
+    // 获取默认实例
+    public static Coroutines getDefault();
+    
+    // 自定义协程队列管理
+    public DispatchQueue getCoroutine(String name);
+    public <T extends DispatchQueue> T getCoroutine(String queueName, Class<T> clazz);
+    public void addCoroutine(String name, DispatchQueue queue);
+    public void removeCoroutine(String name);
+}
+```
+
+### OnceDispatcherQueue（@Deprecated since 1.31.5.0）
+
+```java
+public final class OnceDispatcherQueue extends DispatcherQueue {
+    public static OnceDispatcherQueue get();
+    public void once(@NonNull String token, @NonNull Task task);
+    public static void once(long delay, @NonNull String token, @NonNull Task task);
+}
+```
+
+> **弃用提示**: 请使用 `Coroutines.standard` 或自定义队列替代。
 
 ### DispatchGroup 类
 
@@ -84,9 +111,10 @@ public interface IDLETask extends Task {
 
 | 组件 | 访问方式 | 说明 |
 |------|---------|------|
-| `DispatchQueue.standard` | 静态字段 | 标准调度队列，单线程执行 |
-| `DispatchQueue.io` | 静态字段 | IO 调度队列，协程模式，线程池并发 |
-| `DispatchQueue.once` | 静态字段 | 单次执行队列 |
+| `Coroutines.standard` | 静态字段 | 标准调度队列，单线程执行 |
+| `Coroutines.io` | 静态字段 | IO 调度队列，协程模式，线程池并发 |
+| `Coroutines.once` | 静态字段 | 单次执行队列（@Deprecated） |
+| `Coroutines.getDefault()` | 静态方法 | 获取 Coroutines 单例 |
 | `TaskItemManager` | `TaskItemManager.get()` | 任务项对象池，内部单例 |
 
 ## 内部 API（包可见）
@@ -106,6 +134,9 @@ public class DispatcherQueue implements DispatchQueue {
     
     // 内部任务处理（protected）
     protected void handleTask(Task task);
+    
+    // 内部关闭方法
+    public void shutdown(boolean await, boolean clear);
 }
 ```
 

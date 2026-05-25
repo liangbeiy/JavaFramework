@@ -2,7 +2,7 @@
 
 ## Version
 
-Current: v1.0 (2026-04-30)
+Current: v1.1 (2026-05-25)
 
 ## Document Map
 
@@ -47,3 +47,10 @@ Current: v1.0 (2026-04-30)
 | method-index.tsv | generated |
 | call-graph.tsv | generated |
 | module-deps.tsv | generated |
+
+## Version History
+
+| Version | Date | Modules | Docs | Summary |
+|---------|------|---------|------|---------|
+| v1.1 | 2026-05-25 | 8 | 32+ | apply 4 deltas: coroutine-refactor, rename-textutil-to-textutils, refactor-file-io, misc-fixes |
+| v1.0 | 2026-04-30 | 8 | 32+ | Initial knowledge base generation |
