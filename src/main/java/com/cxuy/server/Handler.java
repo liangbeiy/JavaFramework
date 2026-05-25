@@ -9,7 +9,7 @@ import com.cxuy.framework.annotation.NonNull;
 import com.cxuy.framework.annotation.Nullable;
 import com.cxuy.framework.util.JsonUtil;
 import com.cxuy.framework.util.Logger;
-import com.cxuy.framework.util.TextUtil;
+import com.cxuy.framework.util.TextUtils;
 import com.cxuy.server.annotation.HandlerMethod;
 import com.cxuy.server.annotation.HttpHandler;
 import com.cxuy.server.annotation.Param;
@@ -179,7 +179,7 @@ public class Handler implements com.sun.net.httpserver.HttpHandler {
 
     private Map<String, String> parseQueryParameters(String query) {
         Map<String, String> params = new HashMap<>();
-        if (TextUtil.isEmpty(query)) {
+        if (TextUtils.isEmpty(query)) {
             return params;
         }
         String[] pairs = query.split("&");

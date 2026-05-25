@@ -5,7 +5,7 @@
 
 package com.cxuy.http.protocol.builder;
 
-import com.cxuy.framework.util.TextUtil;
+import com.cxuy.framework.util.TextUtils;
 import com.cxuy.http.client.Request;
 import com.cxuy.http.protocol.Protocol;
 import com.cxuy.http.protocol.annotation.Header;
@@ -35,7 +35,7 @@ public class HeaderBuilder implements RequestBuilder {
     }
 
     private String[] splitByFirstEqual(String str) {
-        if (TextUtil.isEmpty(str)) {
+        if (TextUtils.isEmpty(str)) {
             return new String[]{ str };
         }
         int equalIndex = str.indexOf('=');

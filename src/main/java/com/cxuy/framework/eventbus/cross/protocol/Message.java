@@ -8,7 +8,7 @@ package com.cxuy.framework.eventbus.cross.protocol;
 import com.cxuy.framework.annotation.NonNull;
 import com.cxuy.framework.constant.Constant;
 import com.cxuy.framework.util.JsonUtil;
-import com.cxuy.framework.util.TextUtil;
+import com.cxuy.framework.util.TextUtils;
 import com.cxuy.framework.util.TimeUtil;
 
 public class Message<T> {
@@ -28,7 +28,7 @@ public class Message<T> {
     @NonNull
     public String encode() {
         String jsonData = JsonUtil.toJson(this);
-        if(TextUtil.isEmpty(jsonData)) {
+        if(TextUtils.isEmpty(jsonData)) {
             return Constant.EMPTY_STR;
         }
         return jsonData;

@@ -7,6 +7,7 @@ package com.cxuy;
 
 import com.cxuy.framework.context.Context;
 import com.cxuy.framework.context.FrameworkContext;
+import com.cxuy.framework.coroutine.Coroutines;
 import com.cxuy.framework.eventbus.InterProcessEventBus;
 import com.cxuy.framework.eventbus.annotate.Subscribe;
 import com.cxuy.framework.eventbus.cross.InterProcessServer;

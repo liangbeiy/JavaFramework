@@ -7,7 +7,7 @@ package com.cxuy.framework.context;
 
 import com.cxuy.framework.constant.Constant;
 import com.cxuy.framework.util.Logger;
-import com.cxuy.framework.util.TextUtil;
+import com.cxuy.framework.util.TextUtils;
 
 public enum BuildConfig {
     INSTANCE;
@@ -22,13 +22,13 @@ public enum BuildConfig {
 
     BuildConfig() {
         String buildTypeStr = System.getProperty(Constant.PARAM_KEY_BUILD_TYPE);
-        if(TextUtil.equals(NAME_DEBUG, buildTypeStr)) {
+        if(TextUtils.equals(NAME_DEBUG, buildTypeStr)) {
             this.buildType = Type.DEBUG;
         } else {
             this.buildType = Type.RELEASE;
         }
         String versionCodeStr = System.getProperty(Constant.PARAM_KEY_BUILD_VERSION);
-        if(TextUtil.isEmpty(versionCodeStr)) {
+        if(TextUtils.isEmpty(versionCodeStr)) {
             versionCode = 0;
             return;
         }

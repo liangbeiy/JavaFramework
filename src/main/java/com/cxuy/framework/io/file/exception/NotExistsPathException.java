@@ -1,4 +1,12 @@
+/*
+ * Copyright (c) 2025 liangbeiyuan.
+ * Licensed under the MIT License. See LICENSE file in the project root for full license information.
+ */
+
 package com.cxuy.framework.io.file.exception;
 
-public class NotExistsPathException {
+public class NotExistsPathException extends RuntimeException {
+    public NotExistsPathException() {
+        super("an exception ocurred while create the executor because path is empty");
+    }
 }

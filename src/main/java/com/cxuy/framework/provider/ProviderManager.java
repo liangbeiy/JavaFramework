@@ -6,7 +6,7 @@
 package com.cxuy.framework.provider;
 
 import com.cxuy.framework.util.Logger;
-import com.cxuy.framework.util.TextUtil;
+import com.cxuy.framework.util.TextUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,14 +17,14 @@ public class ProviderManager {
     private final Map<String, Provider> providers = Collections.synchronizedMap(new HashMap<>());
 
     public void add(String name, Provider provider) {
-        if(TextUtil.isEmpty(name) || provider == null) {
+        if(TextUtils.isEmpty(name) || provider == null) {
             return;
         }
         providers.put(name, provider);
     }
 
     public <T extends Provider> T get(String name, Class<T> clazz) {
-        if(TextUtil.isEmpty(name)) {
+        if(TextUtils.isEmpty(name)) {
             return null;
         }
         Provider provider = providers.get(name);
@@ -37,7 +37,7 @@ public class ProviderManager {
     }
 
     public void remove(String name) {
-        if(TextUtil.isEmpty(name)) {
+        if(TextUtils.isEmpty(name)) {
             return;
         }
         providers.remove(name);

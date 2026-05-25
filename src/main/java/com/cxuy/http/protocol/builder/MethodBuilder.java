@@ -6,7 +6,7 @@
 package com.cxuy.http.protocol.builder;
 
 import com.cxuy.framework.annotation.NonNull;
-import com.cxuy.framework.util.TextUtil;
+import com.cxuy.framework.util.TextUtils;
 import com.cxuy.http.client.Method;
 import com.cxuy.http.client.Request;
 import com.cxuy.http.protocol.Protocol;
@@ -22,7 +22,7 @@ public class MethodBuilder implements RequestBuilder {
             return;
         }
         String path = getPath(annotation);
-        if(!TextUtil.isEmpty(path)) {
+        if(!TextUtils.isEmpty(path)) {
             builder.url(protocol.getBaseUrl() + path);
         }
         setMethod(annotation, builder);

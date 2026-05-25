@@ -7,16 +7,8 @@ package com.cxuy.framework.io.file;
 
 import com.cxuy.framework.provider.Provider;
 
-public interface FileProvider extends Provider {
-    String NAME = "FileProvider";
-
-    boolean isExist(String path);
-
-    void create(String path);
-
-    void delete(String path);
-
-    void mkdir(String path);
+public interface ExtraFileProvider extends FileProvider {
+    String NAME = "ExtraFileProvider";
 
     void copy(String sourcePath, String destinationPath);
 

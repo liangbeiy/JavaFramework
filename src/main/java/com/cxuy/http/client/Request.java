@@ -6,7 +6,7 @@
 package com.cxuy.http.client;
 
 import com.cxuy.framework.constant.Constant;
-import com.cxuy.framework.util.TextUtil;
+import com.cxuy.framework.util.TextUtils;
 
 import java.io.File;
 import java.util.HashMap;
@@ -62,7 +62,7 @@ public class Request {
             StringBuilder result = new StringBuilder();
             while (matcher.find()) {
                 String matchKey = matcher.group(1);
-                if (TextUtil.equals(key, matchKey)) {
+                if (TextUtils.equals(key, matchKey)) {
                     matcher.appendReplacement(result, subPath);
                 } else {
                     matcher.appendReplacement(result, matcher.group(0));

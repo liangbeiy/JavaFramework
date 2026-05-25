@@ -7,40 +7,15 @@ package com.cxuy.framework.io.file;
 
 import com.cxuy.framework.provider.Provider;
 
-public interface FileProvider extends Provider {
-    String NAME = "FileProvider";
+public interface ReadFileProvider extends FileProvider {
+    String NAME = "ReadFileProvider";
 
     @FunctionalInterface
     interface ReadFileCallback<R> {
-        void callback(String path, R content);
+        void callback(String path, boolean result, R content);
     }
-
-    @FunctionalInterface
-    interface WriteFileCallback {
-        void callback(String path, int mode, boolean result);
-    }
-
-    boolean isExist(String path);
-
-    void create(String path);
 
     void readString(String path, ReadFileCallback<String> callback);
 
     void readBytes(String path, ReadFileCallback<byte[]> callback);
-
-    void write(String path, String content, WriteFileCallback callback);
-
-    void write(String path, byte[] bytes, WriteFileCallback callback);
-
-    void append(String path, String content, WriteFileCallback callback);
-
-    void append(String path, byte[] bytes, WriteFileCallback callback);
-
-    void delete(String path);
-
-    void mkdir(String path);
-
-    void copy(String sourcePath, String destinationPath);
-
-    void move(String sourcePath, String destinationPath);
 }

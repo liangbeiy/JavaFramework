@@ -6,7 +6,7 @@
 package com.cxuy.http.client;
 
 import com.cxuy.framework.annotation.NonNull;
-import com.cxuy.framework.coroutine.queue.DispatcherQueue;
+import com.cxuy.framework.coroutine.Coroutines;
 import com.cxuy.framework.util.Logger;
 
 import java.io.IOException;
@@ -73,7 +73,7 @@ public class Client {
                 interceptor.beforeSubmitRequest(this, request);
             }
         }
-        DispatcherQueue.io.async(() -> {
+        Coroutines.io.async(() -> {
             Response response = sync(request);
             callback.response(this, request, response);
         });

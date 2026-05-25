@@ -15,10 +15,6 @@ import com.cxuy.framework.util.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -26,11 +22,20 @@ import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 文件管理器（旧版）。
+ * 提供基于 FileExecutor 的文件读写、删除等操作。
+ *
+ * @deprecated 请使用 {@link FileManagerV2} 替代。
+ *             FileManager 将在后续版本中移除。
+ */
+@Deprecated
 public class FileManager implements FileExecutorIsEmptyCallback {
+    private static final String TAG = "FileManager";
 
     @FunctionalInterface
     public interface ReadFileCallback<T> {
-        void callback(@NonNull String path, @Nullable T result);
+        void callback(@NonNull String path, boolean result, @Nullable T content);
     }
 
     @FunctionalInterface
@@ -39,16 +44,6 @@ public class FileManager implements FileExecutorIsEmptyCallback {
         int MODE_APPEND = 1;
         void callback(@NonNull String path, @Nullable T content, int mode, boolean result);
     }
-
-    private static final String TAG = "FileUtil";
-
-    private static final int META_INFO_POSITION = 0;
-    // 8B meta info
-    private static final int META_INFO_SIZE = 8;
-    private static final long MAPPING_FILE_NOT_WRITING = 0;
-    private static final long MAPPING_FILE_WRITING = 1;
-
-    private static final String PROCESS_LOCK_FOLDER = File.separator + ".file_manager" + File.separator + "lock";
 
     private static class HOLDER {
         private static final FileManager INSTANCE = new FileManager();
@@ -83,7 +78,7 @@ public class FileManager implements FileExecutorIsEmptyCallback {
         synchronized(transactionLock) {
             executor = transaction.computeIfAbsent(modifyPath, s -> new FileExecutor(path, this));
         }
-        executor.mutex(() -> {
+        executor.mutex((p) -> {
             File file = new File(modifyPath);
             if(file.exists()) {
                 return;
@@ -120,20 +115,20 @@ public class FileManager implements FileExecutorIsEmptyCallback {
      */
     public void read(@NonNull String path, @NonNull ReadFileCallback<String> callback) {
         String modifyPath = resolvePath(path);
-        // 检查文件是否存在
         if (!isExist(modifyPath)) {
-            callback.callback(path, null);
+            callback.callback(path, false, null);
+            return;
         }
         FileExecutor executor;
         synchronized(transactionLock) {
             executor = transaction.computeIfAbsent(modifyPath, s -> new FileExecutor(path, this));
         }
-        executor.share(() -> {
+        executor.share((p) -> {
             try {
                 byte[] bytes = Files.readAllBytes(Paths.get(modifyPath));
-                callback.callback(path, new String(bytes, StandardCharsets.UTF_8));
+                callback.callback(path, true, new String(bytes, StandardCharsets.UTF_8));
             } catch(Exception e) {
-                callback.callback(path, null);
+                callback.callback(path, false, null);
             }
         });
     }
@@ -182,7 +177,7 @@ public class FileManager implements FileExecutorIsEmptyCallback {
         synchronized(transactionLock) {
             executor = transaction.computeIfAbsent(modifyPath, _ -> new FileExecutor(path, this));
         }
-        executor.mutex(() -> {
+        executor.mutex((p) -> {
             File file = new File(modifyPath);
             if(!file.exists()) {
                 return;
@@ -196,99 +191,6 @@ public class FileManager implements FileExecutorIsEmptyCallback {
         });
     }
 
-    public void readByMemoryMap(@NonNull String filePath, boolean multiProcess, @NonNull ReadFileCallback<String> callback) {
-//        String modifyPath = resolvePath(filePath);
-//        FileExecutor executor;
-//        synchronized(transactionLock) {
-//            executor = transaction.computeIfAbsent(modifyPath, _ -> { return new FileExecutor(modifyPath, this); });
-//        }
-//        File opFile = new File(modifyPath);
-//        executor.share((_) -> {
-//            try(RandomAccessFile raf = new RandomAccessFile(opFile, "r"); FileChannel channel = raf.getChannel()) {
-//                // 率先获取跨进程锁
-//                if(multiProcess) {
-//                    try(RandomAccessFile lockRaf = new RandomAccessFile(opFile, "r"); FileChannel channel = raf.getChannel())
-//                }
-//            } catch (IOException e) {
-//
-//            }
-//        });
-    }
-
-    public void readForMemoryMapping(@NonNull String filePath, @NonNull ReadFileCallback<String> callback) {
-        String modifyPath = resolvePath(filePath);
-        FileExecutor executor;
-        synchronized(transactionLock) {
-            executor = transaction.computeIfAbsent(modifyPath, _ -> { return new FileExecutor(modifyPath, this); });
-        }
-        File opFile = new File(modifyPath);
-        executor.share(() -> {
-            try(RandomAccessFile raf = new RandomAccessFile(opFile, "r"); FileChannel channel = raf.getChannel()) {
-                try(FileLock lock = channel.lock(0, META_INFO_SIZE, true)) {
-                    long fileLength = raf.length();
-                    if(META_INFO_SIZE > fileLength) {
-                        Logger.e(TAG, "file's data has been invalid, file length = " + raf.length());
-                        callback.callback(filePath, null);
-                        return;
-                    }
-                    MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_ONLY, META_INFO_SIZE, fileLength - META_INFO_SIZE);
-                    byte[] data = new byte[buffer.remaining()];
-                    buffer.get(data);
-                    String result = new String(data, StandardCharsets.UTF_8);
-                    callback.callback(filePath, result);
-                }
-            }
-            catch (Exception e) {
-                Logger.e(TAG, "an exception occurred while reading file", e);
-                callback.callback(filePath, null);
-            }
-        });
-    }
-
-    public void writeForMemoryMapping(@NonNull String filePath, @Nullable String content, @Nullable WriteFileCallback<String> callback) {
-        String modifyPath = resolvePath(filePath);
-        FileExecutor executor;
-        synchronized(transactionLock) {
-            executor = transaction.computeIfAbsent(modifyPath, _ -> { return new FileExecutor(modifyPath, this); });
-        }
-        File opFile = new File(modifyPath);
-        executor.mutex(() -> {
-            try (RandomAccessFile raf = new RandomAccessFile(opFile, "rw"); FileChannel channel = raf.getChannel()) {
-                try(FileLock lock = channel.lock(0, 8, false)) {
-                    MappedByteBuffer checkBuffer = channel.map(FileChannel.MapMode.READ_WRITE, META_INFO_POSITION, META_INFO_SIZE);
-                    long metaInfo = checkBuffer.getLong(0);
-                    if(metaInfo == MAPPING_FILE_WRITING) {
-                        Logger.e(TAG, "an exception occurred while checking semaphore.");
-                        return;
-                    }
-                    checkBuffer.putLong(META_INFO_POSITION, MAPPING_FILE_WRITING);
-                    checkBuffer.force();
-
-                    // 清空文件并写入新内容（此时已通过元数据锁保证独占）
-                    byte[] data = content.getBytes(StandardCharsets.UTF_8);
-                    raf.setLength(0);
-                    raf.setLength(data.length); // 设置新长度
-
-                    // writing data
-                    MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_WRITE, META_INFO_SIZE, data.length);
-                    buffer.put(data);
-                    buffer.force();
-
-                    checkBuffer.putLong(META_INFO_POSITION, MAPPING_FILE_NOT_WRITING);
-                    checkBuffer.force();
-                }
-                if(callback != null) {
-                    callback.callback(filePath, content, WriteFileCallback.MODE_WRITE, true);
-                }
-            } catch (IOException e) {
-                Logger.e(TAG, "An exception occurred while writing file, filePath=" + filePath, e);
-                if(callback != null) {
-                    callback.callback(filePath, content, WriteFileCallback.MODE_WRITE, false);
-                }
-            }
-        });
-    }
-
     private void write(@NonNull String path, @Nullable byte[] content, int mode, @Nullable WriteFileCallback<byte[]> callback) {
         final String modifyPath = resolvePath(path);
         final StandardOpenOption[] options = reflectMode(mode);
@@ -296,7 +198,7 @@ public class FileManager implements FileExecutorIsEmptyCallback {
         synchronized(transactionLock) {
             executor = transaction.computeIfAbsent(modifyPath, s -> new FileExecutor(path, this));
         }
-        executor.mutex(() -> {
+        executor.mutex((p) -> {
             File file = new File(modifyPath);
             // 确保父目录存在
             File parentDir = file.getParentFile();
@@ -335,7 +237,7 @@ public class FileManager implements FileExecutorIsEmptyCallback {
         synchronized(transactionLock) {
             executor = transaction.computeIfAbsent(modifyPath, s -> new FileExecutor(path, this));
         }
-        executor.mutex(() -> {
+        executor.mutex((p) -> {
             File file = new File(modifyPath);
             // 确保父目录存在
             File parentDir = file.getParentFile();
@@ -404,10 +306,11 @@ public class FileManager implements FileExecutorIsEmptyCallback {
     }
 
     @Override
-    public void taskEmptyCallback(String path, FileExecutor executor) {
+    public void taskEmptyCallback(FileExecutor executor, String path) {
         synchronized(transactionLock) {
             transaction.remove(path);
         }
+        executor.close();
     }
 
 }

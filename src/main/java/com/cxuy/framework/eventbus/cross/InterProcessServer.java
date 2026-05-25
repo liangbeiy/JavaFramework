@@ -14,7 +14,7 @@ import com.cxuy.framework.lifecycle.DefaultLifecycleOwner;
 import com.cxuy.framework.lifecycle.LifecycleState;
 import com.cxuy.framework.util.JsonUtil;
 import com.cxuy.framework.util.Logger;
-import com.cxuy.framework.util.TextUtil;
+import com.cxuy.framework.util.TextUtils;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -64,10 +64,10 @@ public class InterProcessServer extends DefaultLifecycleOwner {
     }
 
     public void registerClient(String type, InterProcessClientHandler handler) {
-        if(TextUtil.isEmpty(type) || handler == null) {
+        if(TextUtils.isEmpty(type) || handler == null) {
             return;
         }
-        if(TextUtil.equals(UnregisterMessage.DATA_UNREGISTER_ALL, type)) {
+        if(TextUtils.equals(UnregisterMessage.DATA_UNREGISTER_ALL, type)) {
             Logger.w(TAG, "a message has been received, but its type is type of " + UnregisterMessage.DATA_UNREGISTER_ALL + "UnregisterAll and operation is " + Operation.REGISTER.rawValue);
             return;
         }
@@ -90,11 +90,11 @@ public class InterProcessServer extends DefaultLifecycleOwner {
     }
 
     public void unregisterClient(String type, InterProcessClientHandler poster) {
-        if(TextUtil.isEmpty(type) || poster == null) {
+        if(TextUtils.isEmpty(type) || poster == null) {
             return;
         }
         Set<String> emptyEvent = new HashSet<>();
-        if(TextUtil.equals(UnregisterMessage.DATA_UNREGISTER_ALL, type)) {
+        if(TextUtils.equals(UnregisterMessage.DATA_UNREGISTER_ALL, type)) {
             for(Map.Entry<String, Set<InterProcessClientHandler>> entry : subscribers.entrySet()) {
                 Set<InterProcessClientHandler> handlers = entry.getValue();
                 handlers.remove(poster);

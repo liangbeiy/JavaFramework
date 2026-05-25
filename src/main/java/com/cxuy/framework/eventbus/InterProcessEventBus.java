@@ -6,6 +6,7 @@
 package com.cxuy.framework.eventbus;
 
 import com.cxuy.framework.annotation.Nullable;
+import com.cxuy.framework.coroutine.Coroutines;
 import com.cxuy.framework.coroutine.queue.DispatcherQueue;
 import com.cxuy.framework.coroutine.task.Task;
 import com.cxuy.framework.eventbus.annotate.Subscribe;
@@ -229,7 +230,7 @@ public final class InterProcessEventBus implements EventBus {
 
     public void handlePendingMessage() {
         // 处理全部挂起事件
-        DispatcherQueue.io.async(() -> {
+        Coroutines.io.async(() -> {
             synchronized(pendingQueueLock) {
                 Queue<PendingMessage> copyList = new LinkedList<>(pendingMessages);
                 pendingMessages.clear();

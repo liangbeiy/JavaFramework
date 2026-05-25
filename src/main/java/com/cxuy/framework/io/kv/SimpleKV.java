@@ -13,7 +13,7 @@ import com.cxuy.framework.lifecycle.LifecycleObserver;
 import com.cxuy.framework.lifecycle.LifecycleOwner;
 import com.cxuy.framework.lifecycle.LifecycleState;
 import com.cxuy.framework.util.JsonUtil;
-import com.cxuy.framework.util.TextUtil;
+import com.cxuy.framework.util.TextUtils;
 
 import java.io.File;
 import java.util.*;
@@ -101,7 +101,7 @@ public class SimpleKV implements MapStorage, LifecycleObserver {
 
     @Override
     public void put(@Nullable String key, @Nullable String value) {
-        if(TextUtil.isEmpty(key) || value == null) {
+        if(TextUtils.isEmpty(key) || value == null) {
             return;
         }
         kvMap.put(key, value);
@@ -115,7 +115,7 @@ public class SimpleKV implements MapStorage, LifecycleObserver {
 
     @Override
     public void remove(String key) {
-        if(TextUtil.isEmpty(key)) {
+        if(TextUtils.isEmpty(key)) {
             return;
         }
         kvMap.remove(key);
@@ -155,7 +155,7 @@ public class SimpleKV implements MapStorage, LifecycleObserver {
 
     public int getInt(@Nullable String key, int defaultValue) {
         String value = get(key, null);
-        if(TextUtil.isEmpty(value)) {
+        if(TextUtils.isEmpty(value)) {
             return defaultValue;
         }
         try {
@@ -167,7 +167,7 @@ public class SimpleKV implements MapStorage, LifecycleObserver {
 
     public long getLong(@Nullable String key, long defaultValue) {
         String value = get(key, null);
-        if(TextUtil.isEmpty(value)) {
+        if(TextUtils.isEmpty(value)) {
             return defaultValue;
         }
         try {
@@ -179,7 +179,7 @@ public class SimpleKV implements MapStorage, LifecycleObserver {
 
     public float getFloat(@Nullable String key, float defaultValue) {
         String value = get(key, null);
-        if(TextUtil.isEmpty(value)) {
+        if(TextUtils.isEmpty(value)) {
             return defaultValue;
         }
         try {
@@ -196,7 +196,7 @@ public class SimpleKV implements MapStorage, LifecycleObserver {
     @Nullable
     public String[] getArray(@Nullable String key) {
         String value = get(key, null);
-        if(TextUtil.isEmpty(value)) {
+        if(TextUtils.isEmpty(value)) {
             return null;
         }
         return JsonUtil.fromJsonToArray(value, String[].class);
@@ -205,7 +205,7 @@ public class SimpleKV implements MapStorage, LifecycleObserver {
     @Nullable
     public List<String> getList(@Nullable String key) {
         String value = get(key, null);
-        if(TextUtil.isEmpty(value)) {
+        if(TextUtils.isEmpty(value)) {
             return null;
         }
         return JsonUtil.fromJsonToList(value, String.class);
@@ -214,7 +214,7 @@ public class SimpleKV implements MapStorage, LifecycleObserver {
     @Nullable
     public Set<String> getSet(@Nullable String key) {
         String value = get(key, null);
-        if(TextUtil.isEmpty(value)) {
+        if(TextUtils.isEmpty(value)) {
             return null;
         }
         return JsonUtil.fromJson(value, Set.class, String.class);
@@ -222,7 +222,7 @@ public class SimpleKV implements MapStorage, LifecycleObserver {
 
     public Map<String, String> getMap(@Nullable String key) {
         String value = get(key, null);
-        if(TextUtil.isEmpty(value)) {
+        if(TextUtils.isEmpty(value)) {
             return null;
         }
         return JsonUtil.fromJson(value, Map.class, String.class, String.class);
@@ -230,7 +230,7 @@ public class SimpleKV implements MapStorage, LifecycleObserver {
 
     @Override
     public String get(String key, String defaultValue) {
-        if(TextUtil.isEmpty(key)) {
+        if(TextUtils.isEmpty(key)) {
             return defaultValue;
         }
         boolean success = waitForInit();
@@ -252,7 +252,7 @@ public class SimpleKV implements MapStorage, LifecycleObserver {
 
     @Override
     public boolean contains(String key) {
-        if(TextUtil.isEmpty(key)) {
+        if(TextUtils.isEmpty(key)) {
             return false;
         }
         boolean success = waitForInit();
@@ -281,12 +281,12 @@ public class SimpleKV implements MapStorage, LifecycleObserver {
     }
 
     protected void readFromFile() {
-        FileManager.getInstance().read(storagePath, (_, result) -> {
-            if(TextUtil.isEmpty(result)) {
+        FileManager.getInstance().read(storagePath, (_, success, content) -> {
+            if(TextUtils.isEmpty(content)) {
                 hasInit();
                 return;
             }
-            Map<String, String> fileMap = JsonUtil.fromJson(result, Map.class);
+            Map<String, String> fileMap = JsonUtil.fromJson(content, Map.class);
             if(fileMap == null) {
                 hasInit();
                 return;
@@ -314,7 +314,7 @@ public class SimpleKV implements MapStorage, LifecycleObserver {
     }
 
     protected void writeToFile(@Nullable String content) {
-        if(TextUtil.isEmpty(content)) {
+        if(TextUtils.isEmpty(content)) {
             return;
         }
         FileManager.getInstance().write(storagePath, content, null);

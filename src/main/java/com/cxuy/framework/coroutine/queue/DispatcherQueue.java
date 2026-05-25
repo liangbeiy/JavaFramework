@@ -23,7 +23,7 @@ public class DispatcherQueue implements DispatchQueue {
     // CPU核心数量
     private static final int CPU_CORE = Runtime.getRuntime().availableProcessors();
 
-    private static final String DEFAULT_DISPATCHER_NAME = "default_DispatcherQueue#Name";
+    private static final String NAME_DISPATCHER_QUEUE_DEFAULT = "com.cxuy.framework.coroutine#default_name";
 
     protected final String name;
 
@@ -47,11 +47,11 @@ public class DispatcherQueue implements DispatchQueue {
     protected PriorityQueue<TaskItem> queue;
 
     public DispatcherQueue() {
-        this(DEFAULT_DISPATCHER_NAME, false);
+        this(NAME_DISPATCHER_QUEUE_DEFAULT, false);
     }
 
     public DispatcherQueue(boolean isCoroutine) {
-        this(DEFAULT_DISPATCHER_NAME, isCoroutine);
+        this(NAME_DISPATCHER_QUEUE_DEFAULT, isCoroutine);
     }
 
     public DispatcherQueue(String name) {
@@ -237,32 +237,42 @@ public class DispatcherQueue implements DispatchQueue {
     }
 
     public void shutdown(boolean await, boolean clear) {
-        if(status.rawValue < Status.DESTROY.rawValue) {
-            synchronized(statusLock) {
-                setStatus(Status.DESTROY);
+        if(status.rawValue >= Status.DESTROY.rawValue) {
+            return;
+        }
+        synchronized(statusLock) {
+            this.status = Status.DESTROY;
+        }
+        synchronized(statusObserversLock) {
+            for(StatusObserver observer : statusObservers) {
+                observer.onChanged(this, Status.DESTROY);
             }
-            synchronized(taskQueueLock) {
-                if(clear) {
-                    for (TaskItem each : taskQueue) {
-                        TaskItemManager.get().recycle(each);
-                    }
-                    taskQueue.clear();
+        }
+        synchronized(taskQueueLock) {
+            if(clear) {
+                for (TaskItem each : taskQueue) {
+                    TaskItemManager.get().recycle(each);
                 }
-                taskQueueLock.notifyAll();
+                taskQueue.clear();
+                for (TaskItem each : idleQueue) {
+                    TaskItemManager.get().recycle(each);
+                }
+                idleQueue.clear();
             }
-            if(await) {
-                synchronized(threadLock) {
-                    try {
-                        thread.join();
-                    }
-                    catch(InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
+            taskQueueLock.notifyAll();
+        }
+        if(await) {
+            synchronized(threadLock) {
+                try {
+                    thread.join();
+                }
+                catch(InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
             }
-            if(isCoroutine) {
-                shutdownPool(await);
-            }
+        }
+        if(isCoroutine) {
+            shutdownPool(await);
         }
     }
 
@@ -296,14 +306,15 @@ public class DispatcherQueue implements DispatchQueue {
             if(!taskQueue.isEmpty()) {
                 setStatus(Status.BUSY);
                 queue = taskQueue;
+            } else {
+                setStatus(Status.IDLE);
+                if(!idleQueue.isEmpty()) {
+                    lastIDLETimestamp = TimeUtil.now();
+                    queue = idleQueue;
+                    return;
+                }
+                setStatus(Status.DORMANT);
             }
-            setStatus(Status.IDLE);
-            if(!idleQueue.isEmpty()) {
-                lastIDLETimestamp = TimeUtil.now();
-                queue = idleQueue;
-                return;
-            }
-            setStatus(Status.DORMANT);
         }
     }
 

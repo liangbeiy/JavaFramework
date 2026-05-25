@@ -12,12 +12,6 @@ import com.cxuy.framework.coroutine.queue.OnceDispatcherQueue;
 import com.cxuy.framework.coroutine.task.Task;
 
 public interface DispatchQueue {
-    String DEFAULT_DISPATCHER_QUEUE = "DispatchQueue#standard";
-    String DEFAULT_DISPATCHER_IO = "DispatchQueue#IO";
-    OnceDispatcherQueue once = OnceDispatcherQueue.get();
-    DispatchQueue standard = new DispatcherQueue(DEFAULT_DISPATCHER_QUEUE);
-    DispatchQueue io = new DispatcherQueue(DEFAULT_DISPATCHER_IO, true);
-
     interface StatusObserver {
         void onChanged(DispatcherQueue queue, Status status);
     }

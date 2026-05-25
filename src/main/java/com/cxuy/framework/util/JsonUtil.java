@@ -40,7 +40,7 @@ public final class JsonUtil {
 
     @Nullable
     public static <T> T getValue(String jsonStr, String key, T defaultValue, Type rawType, Type... templateTypes) {
-        if(TextUtil.isEmpty(jsonStr) || TextUtil.isEmpty(key)) {
+        if(TextUtils.isEmpty(jsonStr) || TextUtils.isEmpty(key)) {
             return defaultValue;
         }
         JsonObject jsonObject = INSTANCE.fromJson(jsonStr, JsonObject.class);
@@ -60,7 +60,7 @@ public final class JsonUtil {
 
     @Nullable
     public static String optString(String jsonStr, String key, String defaultValue) {
-        if(TextUtil.isEmpty(jsonStr) || TextUtil.isEmpty(key)) {
+        if(TextUtils.isEmpty(jsonStr) || TextUtils.isEmpty(key)) {
             return defaultValue;
         }
         JsonObject jsonObject = INSTANCE.fromJson(jsonStr, JsonObject.class);
